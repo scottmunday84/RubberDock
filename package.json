@@ -1,9 +1,10 @@
 {
-  "name": "smooth-layout",
+  "name": "untitled-layout",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "serve": "npx parcel public/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,12 +15,18 @@
     "@babel/preset-env": "^7.12.7",
     "@babel/preset-typescript": "^7.12.7",
     "@fortawesome/fontawesome-free": "^5.15.1",
+    "@types/react": "17.0.0",
+    "@types/react-dom": "17.0.0",
     "parcel-bundler": "^1.12.4",
     "sass": "^1.29.0",
     "typescript": "^4.1.2"
   },
   "dependencies": {
+    "lib": "^4.3.0",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
+    "uuid": "^8.3.1"
   }
 }
