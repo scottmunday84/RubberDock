@@ -1,31 +1,21 @@
 import {Events} from "../util/common";
 
-let groupState = {
-    groups: new Set()
-};
+let initialState = new Set();
 
-const reducer = (state = groupState, action) => {
+const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case Events.GroupRegister:
+        case Events.ItemRegister:
             return {
                 ...state,
-                groups: {
-                    ...state.groups,
-                    [action.payload]: {
-                        items: {}
-                    }
-                }
+                [action.payload]: true
             };
-        case Events.GroupUnregister:
+        case Events.ItemUnregister:
             return {
-                ...state,
-                groups: {
-                    ...Object
-                        .keys(state.groups)
-                        .filter(key => key !== action.payload)
-                        .map(x => ({[x]: state.groups[x]}))
-                }
-            }
+                ...Object
+                    .keys(state)
+                    .filter(key => key !== action.payload)
+                    .map(x => ({[x]: state[x]}))
+                };
         default:
             return state;
     }

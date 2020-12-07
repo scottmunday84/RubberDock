@@ -1,15 +1,27 @@
-import React, {cloneElement, Component, FunctionComponent, ReactElement, ReactNode, useEffect, useState} from "react";
+import React, {
+    cloneElement,
+    Component,
+    createRef,
+    FunctionComponent,
+    ReactElement,
+    ReactNode, Ref,
+    useEffect, useRef,
+    useState
+} from "react";
 import {v4 as uuid} from "uuid";
 import Item from "./Item";
 import Tab from "./Tab";
+import Resizer from "./Resizer";
 
 type ChildProps = {
     id: string,
-    label: string,
-    child: ReactNode
+    resizerId: string,
+    child: ReactNode,
 };
 
-const GridGroupItem: FunctionComponent<ChildProps> = ({id, label, child}) => {
+const GridGroupItem: FunctionComponent<ChildProps> = ({id, resizerId, child}) => {
+    let itemRef = useRef();
+
     function isItem(x): x is Item {
         if ((x as Item).type === Item) {
             return true;
@@ -17,15 +29,26 @@ const GridGroupItem: FunctionComponent<ChildProps> = ({id, label, child}) => {
         return false;
     }
 
-    const [active, setActive] = useState(false);
+    const [isActive, setIsActive] = useState(false);
+    const [isMaximized, setIsMaximized] = useState(false);
+    const onMaximize = () => setIsMaximized(true);
+    const onMinimize = () => setIsMaximized(false);
+    const onClose = () => {
+        let item = itemRef.current;
+        let resizer = document.getElementById(resizerId);
+        item.parentNode.removeChild(item);
+        if (resizer) {
+            resizer.parentNode.removeChild(resizer);
+        }
+    }
 
     useEffect(() => {
-        setActive(true);
+        setIsActive(true);
     });
 
     return isItem(child) ? (
-        <div key={id} id={id} className={`untitled-layout__item untitled-layout__child ${active ? 'active' : ''}`}>
-            <Tab label="Here" />
+        <div ref={itemRef} key={id} id={id} className={`untitled-layout__item untitled-layout__child ${isActive ? 'active' : ''} ${isMaximized ? 'maximize' : ''}`}>
+            <Tab label={child.props.title ?? "Untitled"} isMaximized={isMaximized} onMaximize={onMaximize} onMinimize={onMinimize} onClose={onClose}  />
             {child}
         </div>) : cloneElement(child, {key: id, id: id});
 }
@@ -35,26 +58,22 @@ class GridGroup extends Component {
     AnyResizer;
 
     render() {
-        let leftId;
-        let rightId;
+        let parentRef = createRef();
 
         return (
-            <div className={`${this.className} untitled-layout__parent`}>
+            <div ref={parentRef} className={`${this.className} untitled-layout__parent`} {...this.props}>
                 {React.Children.map(this.props.children, (child: ReactElement, index) => {
                     // Create new child
-                    if (index === 0) {
-                        rightId = uuid();
-
-                        return (<GridGroupItem id={rightId} label={"here"} child={child} />);
+                    if (index === (this.props.children as Array<ReactNode>).length - 1) {
+                        return (<GridGroupItem id={uuid()} child={child} />);
                     }
 
-                    // Left becomes right
-                    leftId = rightId;
-                    rightId = uuid();
+                    const childId = uuid();
+                    let resizerId = uuid();
 
                     return [
-                        (<this.AnyResizer key={uuid()} leftId={leftId} rightId={rightId} />),
-                        (<GridGroupItem id={rightId} label={"here"} child={child} />)];
+                        (<GridGroupItem id={childId} resizerId={resizerId} child={child} />),
+                        (<this.AnyResizer key={uuid()} id={resizerId} parentRef={parentRef} leftId={childId} />)];
                 })}
             </div>);
     }
