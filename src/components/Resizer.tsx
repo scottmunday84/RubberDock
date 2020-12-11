@@ -1,7 +1,7 @@
 import React, {Component, useRef} from "react";
 
 class Resizer extends Component {
-    onMouseMove(event, item) {
+    onMouseMove(event, left, right) {
         throw new Error('Not implemented');
     }
 
@@ -12,17 +12,18 @@ class Resizer extends Component {
 
 const ResizerBody = props => {
     let {itemRef, onMouseMove: _onMouseMove} = props;
-    let item;
+    let left, right;
     const ref = useRef();
 
     const onMouseDown = () => {
-        item = itemRef.current;
+        left = itemRef.current;
+        right = left.nextSibling.nextSibling;
 
         let onMouseUp = () => {
             window.removeEventListener('mouseup', onMouseUp);
             window.removeEventListener('mousemove', onMouseMove);
         }
-        let onMouseMove = event => _onMouseMove(event, item);
+        let onMouseMove = event => _onMouseMove(event, left, right);
 
         window.addEventListener('mouseup', onMouseUp);
         window.addEventListener('mousemove', onMouseMove);
