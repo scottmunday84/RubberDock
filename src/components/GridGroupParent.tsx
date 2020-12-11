@@ -8,7 +8,7 @@ const GridGroupParent = props => {
     return (
         <div ref={ref} className={className}>
             {React.Children.map(children, (child: ReactElement, index) => {
-                return (<GridGroupChild key={index} child={child} resizer={index < (props.children as ReactNode[]).length - 1 ? resizer : null} />);
+                return (<GridGroupChild key={index} item={child} resizer={index < (props.children as ReactNode[]).length - 1 ? resizer : null} />);
             })}
         </div>);
 };

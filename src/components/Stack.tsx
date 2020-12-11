@@ -18,10 +18,10 @@ class Stack extends Component {
     }
 
     render() {
-        let {children} = this.props;
+        let {itemRef, children} = this.props;
 
         return (
-            <div className={`untitled-layout__stack active`}>
+            <div ref={itemRef} className={`untitled-layout__stack active`}>
                 <div className={`untitled-layout__stack__item-tabs`}>
                     {Children.map(children, child => {
                         let {title} = child.props;

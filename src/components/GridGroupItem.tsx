@@ -1,19 +1,20 @@
-import React, {cloneElement, FunctionComponent, ReactElement, ReactNode, useEffect, useRef} from "react";
+import React, {
+    cloneElement,
+    forwardRef,
+    FunctionComponent,
+    ReactNode
+} from "react";
 import GridGroup from "./GridGroup";
 import Item from "./Item";
 import Stack from "./Stack";
 import {ReactType} from "../util/common";
 
 type GridGroupItemProps = {
-    child: ReactNode,
-    registerChild: Function
+    item: ReactNode
 };
 
-const GridGroupItem: FunctionComponent<GridGroupItemProps> = ({child, registerChild}) => {
-    const ref = useRef();
-    useEffect(() => {
-        registerChild(ref);
-    });
+const GridGroupItem = forwardRef((props, ref) => {
+    let {item} = props;
 
     function isGridGroup(x: ReactType): x is ReactType {
         return (x as GridGroup).type.prototype instanceof GridGroup;
@@ -27,13 +28,13 @@ const GridGroupItem: FunctionComponent<GridGroupItemProps> = ({child, registerCh
         return (x as Item).type === Item;
     }
 
-    if (isGridGroup(child)) {
-        return cloneElement(child as ReactElement, {ref});
-    } else if (isStack(child)) {
-        return cloneElement(child, {ref});
-    } else if (isItem(child)) {
-        return (<Stack>
-            {cloneElement(child, {ref})}
+    if (isGridGroup(item)) {
+        return cloneElement(item, {itemRef: ref});
+    } else if (isStack(item)) {
+        return cloneElement(item, {itemRef: ref});
+    } else if (isItem(item)) {
+        return (<Stack itemRef={ref}>
+            {item}
         </Stack>);
     }
 

@@ -1,16 +1,13 @@
-import React from "react";
+import React, {useRef} from "react";
 import GridGroupItem from "./GridGroupItem";
 
 const GridGroupChild = props => {
-    let {child, resizer: Resizer} = props;
-    let refs = [];
-    const registerChild = ref => {
-        refs.push(ref);
-    };
+    let {item, resizer: Resizer} = props;
+    let itemRef = useRef();
 
     return [
-        (<GridGroupItem child={child} registerChild={registerChild} />),
-        Resizer ? (<Resizer registerChild={registerChild} />) : null];
+        (<GridGroupItem ref={itemRef} item={item} />),
+        Resizer ? (<Resizer itemRef={itemRef} />) : null];
 }
 
 export default GridGroupChild;
