@@ -12,25 +12,73 @@ $layoutForegroundColor: #f3f3f3;
   flex: 0 0 auto;
   user-select: none;
   &:hover {
-    cursor: col-resize;
     background-color: #ccc;
   }
 }
 
-@mixin untitledLayoutComponent($isGroup: false) {
-  & {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow: hidden;
-    @extend %expand;
+%grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  @extend %expand;
+}
 
-    @if $isGroup {
-      >.untitled-layout__child {
+.untitled-layout {
+  &__layout {
+    @extend %grid;
+    background-color: $layoutBackgroundColor;
+    color: $layoutForegroundColor;
+  }
+
+  &__row {
+    @extend %grid;
+    flex-direction: row;
+    .untitled-layout__resizer {
+      @extend %resizer;
+      width: $resizerSize;
+      height: 100%;
+      &:hover {
+        cursor: col-resize;
+      }
+    }
+  }
+
+  &__column {
+    @extend %grid;
+    flex-direction: column;
+    .untitled-layout__resizer {
+      @extend %resizer;
+      width: 100%;
+      height: $resizerSize;
+      &:hover {
+        cursor: row-resize;
+      }
+    }
+  }
+
+  &__stack {
+    @extend %expand;
+    display: flex;
+    flex-direction: column;
+    &__item-tabs {
+      .untitled-layout__item-tab {
         display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-        opacity: 0;
         @extend %expand;
+        line-height: 32px;
+        height: 32px;
+        max-height: 32px;
+        .untitled-layout__item-tab__label {
+          display: inline-block;
+          padding: 0 10px 0 15px;
+          background-color: $itemBackgroundColor;
+        }
+      }
+    }
+    &__items {
+      @extend %expand;
+      .untitled-layout__item {
+        @extend %expand;
+        background-color: $itemBackgroundColor;
         transition: opacity 0.5s ease-in;
         &.active {
           opacity: 1;
@@ -43,71 +91,11 @@ $layoutForegroundColor: #f3f3f3;
           left: 0;
           background-color: $layoutBackgroundColor;
         }
-        >.untitled-layout__item__tab {
-          display: flex;
-          @extend %expand;
-          line-height: 32px;
-          height: 32px;
-          max-height: 32px;
-          &>.untitled-layout__item__tab__label {
-            display: inline-block;
-            padding: 0 10px 0 15px;
-            background-color: $itemBackgroundColor;
-          }
-        }
-        >.untitled-layout__item__outer-body {
-          flex: 1 1 auto;
-          @extend %expand;
-          background-color: $itemBackgroundColor;
-          >.untitled-layout__item__inner-body {
+        .untitled-layout__item__container {
+          .untitled-layout__item__body {
             padding: 15px;
           }
         }
-      }
-    }
-  }
-}
-
-.untitled-layout {
-  &__layout {
-    @include untitledLayoutComponent;
-    @extend %expand;
-    background-color: $layoutBackgroundColor;
-    color: $layoutForegroundColor;
-  }
-
-  &__stack {
-    @include untitledLayoutComponent(true);
-    .untitled-layout__child {
-      overflow: hidden;
-      width: 0;
-      height: 0;
-      opacity: 0 !important;
-      &.focus {
-        @extend %expand;
-        opacity: 1 !important;
-      }
-    }
-  }
-
-  &__row.untitled-layout__parent {
-    @include untitledLayoutComponent(true);
-    .untitled-layout__resizer {
-      @extend %resizer;
-      width: $resizerSize;
-      height: 100%;
-    }
-  }
-
-  &__column.untitled-layout__parent {
-    @include untitledLayoutComponent(true);
-    flex-direction: column;
-    .untitled-layout__resizer {
-      @extend %resizer;
-      width: 100%;
-      height: $resizerSize;
-      &:hover {
-        cursor: row-resize;
       }
     }
   }

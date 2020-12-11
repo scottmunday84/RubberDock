@@ -3,7 +3,7 @@ import GridGroup from "./GridGroup";
 
 class Column extends GridGroup {
     className = 'untitled-layout__column';
-    AnyResizer = ColumnResizer;
+    resizer = ColumnResizer;
 }
 
 export default Column;

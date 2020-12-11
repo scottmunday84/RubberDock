@@ -1,45 +1,40 @@
-import React, {Component, createRef, Ref} from "react";
+import React, {Component, useEffect, useRef} from "react";
 
-type ResizerProps = {
-    id: string,
-    parentRef: Ref<any>,
-    leftId: any
+class Resizer extends Component {
+    render() {
+        return (<ResizerBody {...this.props} />);
+    }
 }
 
-class Resizer extends Component<ResizerProps, {}> {
-    resizerRef;
-    parentRef;
-    left;
+const ResizerBody = props => {
+    let {registerChild, itemRef} = props;
+    const ref = useRef();
 
-    onMouseDown(parentRef, leftId) {
-        // Get the parent container's bounding client rectangle to compare with the left/right
-        this.left = document.getElementById(leftId);
+    useEffect(() => {
+        registerChild(ref);
+    });
+
+    const onMouseDown = () => {
+        left = document.getElementById(leftId);
 
         let onMouseUp = () => {
             window.removeEventListener('mouseup', onMouseUp);
             window.removeEventListener('mousemove', onMouseMove);
         }
-        let onMouseMove = event => this.onMouseMove(event);
+        let onMouseMove = event => onMouseMove(event);
 
         window.addEventListener('mouseup', onMouseUp);
         window.addEventListener('mousemove', onMouseMove);
     }
 
-    onMouseMove(event) {
+    const onMouseMove = event => {
         throw new Error('Not implemented');
     };
 
-    render() {
-        const {id, parentRef, leftId} = this.props;
-        this.parentRef = parentRef;
-        this.resizerRef = createRef();
-
-        return (<div
-            ref={this.resizerRef}
-            id={id}
-            onMouseDown={() => this.onMouseDown(parentRef, leftId)}
-            className="untitled-layout__resizer">&nbsp;</div>);
-    }
+    return (<div
+        ref={ref}
+        className="untitled-layout__resizer"
+        onMouseDown={}>&nbsp;</div>);
 }
 
 export default Resizer;

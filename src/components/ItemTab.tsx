@@ -1,16 +1,16 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-import React, {FunctionComponent, ReactElement} from "react";
+import React, {FunctionComponent, MouseEventHandler, ReactElement} from "react";
 
 type TabProps = {
     label: string,
     isMaximized: boolean,
-    onMaximize: Function,
-    onMinimize: Function,
-    onClose: Function
+    onMaximize: MouseEventHandler,
+    onMinimize: MouseEventHandler,
+    onClose: MouseEventHandler
 }
 
-const Tab: FunctionComponent<TabProps> = ({label, isMaximized, onMaximize, onMinimize, onClose}) => {
+const ItemTab: FunctionComponent<TabProps> = ({label, isMaximized, onMaximize, onMinimize, onClose}) => {
     let toggleFullscreen = () => {
         if (!isMaximized) {
             return (<i className="fas fa-window-maximize" onClick={onMaximize} />);
@@ -20,15 +20,15 @@ const Tab: FunctionComponent<TabProps> = ({label, isMaximized, onMaximize, onMin
     };
 
     return (
-        <div className="untitled-layout__item__tab">
-            <div className="untitled-layout__item__tab__label">
+        <div className="untitled-layout__item-tab">
+            <div className="untitled-layout__item-tab__label">
                 {label}
             </div>
-            <div className="untitled-layout__item__button-bar">
+            <div className="untitled-layout__item-tab__button-bar">
                 {toggleFullscreen()}
                 <i className="fas fa-window-close" onClick={onClose} />
             </div>
         </div>);
 };
 
-export default Tab;
+export default ItemTab;
