@@ -1,7 +1,7 @@
 import React, {Component, useRef} from "react";
 
 class Resizer extends Component {
-    onMouseMove(event, left, right) {
+    onMouseMove(event, left, right, leftFlexBasis, rightFlexBasis) {
         throw new Error('Not implemented');
     }
 
