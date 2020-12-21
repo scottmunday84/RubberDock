@@ -24,7 +24,7 @@ const GridGroupItem = forwardRef((props, ref) => {
     if (isGridGroup(item)) {
         return cloneElement(item, {itemRef: ref});
     } else if (isStack(item)) {
-        return cloneElement(item, {itemRef: ref});
+        return cloneElement(item, {itemRef: ref, onClose});
     } else if (isItem(item)) {
         return (<Stack itemRef={ref} onClose={onClose}>
             {item}
