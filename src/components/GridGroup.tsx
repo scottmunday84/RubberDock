@@ -3,7 +3,7 @@ import GridGroupParent from "./GridGroupParent";
 
 class GridGroup extends Component {
     type: any;
-    className;d
+    className;
     resizer;
 
     render() {

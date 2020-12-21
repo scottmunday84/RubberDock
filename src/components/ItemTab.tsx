@@ -1,34 +1,30 @@
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import React, {useEffect, useRef, useState} from "react";
+import {connect} from "react-redux";
+import {toggleFullscreen} from "../actions/ItemActions";
 
-import React, {FunctionComponent, MouseEventHandler, ReactElement} from "react";
+const ItemTab = ({children, onClose, toggleFullscreen}) => {
+    const ref = useRef();
+    const [isActive, setIsActive] = useState(false);
+    useEffect(() => {
+        setIsActive(true);
+    }, []);
 
-type TabProps = {
-    label: string,
-    isMaximized: boolean,
-    onMaximize: MouseEventHandler,
-    onMinimize: MouseEventHandler,
-    onClose: MouseEventHandler
-}
-
-const ItemTab: FunctionComponent<TabProps> = ({label, isMaximized, onMaximize, onMinimize, onClose}) => {
-    let toggleFullscreen = () => {
-        if (!isMaximized) {
-            return (<i className="fas fa-window-maximize" onClick={onMaximize} />);
-        }
-
-        return (<i className="fas fa-window-minimize" onClick={onMinimize} />);
-    };
-
-    return (
-        <div className="untitled-layout__item-tab">
-            <div className="untitled-layout__item-tab__label">
-                {label}
-            </div>
-            <div className="untitled-layout__item-tab__button-bar">
-                {toggleFullscreen()}
-                <i className="fas fa-window-close" onClick={onClose} />
-            </div>
-        </div>);
+    return (<div ref={ref} className={`rubber-dock__item-tab ${isActive ? 'active' : ''}`}>
+        <div className="rubber-dock__item-tab__label">
+            {children}
+        </div>
+        <div className="rubber-dock__item-tab__button-bar">
+            <i className="fas fa-window-maximize" onClick={toggleFullscreen} />
+            <i className="fas fa-window-close" onClick={onClose} />
+        </div>
+    </div>);
 };
 
-export default ItemTab;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    toggleFullscreen: toggleFullscreen(dispatch).bind(null, ownProps.id)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemTab);
+

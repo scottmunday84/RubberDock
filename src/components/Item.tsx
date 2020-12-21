@@ -1,54 +1,40 @@
-import React, {Component} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import {connect} from "react-redux";
+import {deregisterItem, registerItem, toggleFullscreen} from "../actions/ItemActions";
 
-type ItemProps = {
-    title: string
-};
+const Item = props => {
+    let {children, isFullscreen, registerItem, deregisterItem, toggleFullscreen} = props;
+    let ref = useRef();
+    const [isActive, setIsActive] = useState(false);
+    useEffect(() => {
+        setIsActive(true);
+        registerItem();
 
-type ItemState = {
-    isMaximized: boolean
-};
+        return deregisterItem;
+    }, []);
 
-class Item extends Component<ItemProps, ItemState> {
-    type: any;
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            isMaximized: false
-        }
-    }
-
-    render() {
-        const {title, children} = this.props;
-        const {isMaximized} = this.state;
-
-        const onMaximize = () => this.setState({isMaximized: true});
-        const onMinimize = () => this.setState({isMaximized: false});
-        const onClose = () => {
-            // let item = itemRef.current;
-            // let resizer = document.getElementById(resizerId);
-            // item.parentNode.removeChild(item);
-            /*if (resizer) {
-                resizer.parentNode.removeChild(resizer);
-            }*/
-        }
-
-        return (<ItemInner>
-            {children}
-        </ItemInner>);
-    }
-}
-
-const ItemInner = props => {
-    let {children} = props;
-
-    return (<div className="untitled-layout__item">
-        <div className="untitled-layout__item__container">
-            <div className="untitled-layout__item__body">
+    return (<div ref={ref} className={`rubber-dock__item ${isActive ? 'active' : ''} ${isFullscreen ? 'fullscreen' : ''}`}>
+        {isFullscreen ? (<i className="fas fa-window-minimize" onClick={toggleFullscreen} />) : ''}
+        <div className="rubber-dock__item__container">
+            <div className="rubber-dock__item__body">
                 {children}
             </div>
         </div>
     </div>);
 };
 
-export default Item;
+const mapStateToProps = (state, ownProps) => {
+    let item = state.items[ownProps.id];
+
+    return {
+        isFullscreen: item?.isFullscreen
+    };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    registerItem: registerItem(dispatch).bind(null, ownProps.id),
+    deregisterItem: deregisterItem(dispatch).bind(null, ownProps.id),
+    toggleFullscreen: toggleFullscreen(dispatch).bind(null, ownProps.id)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Item);

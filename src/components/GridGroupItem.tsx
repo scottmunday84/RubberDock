@@ -1,20 +1,13 @@
 import React, {
     cloneElement,
-    forwardRef,
-    FunctionComponent,
-    ReactNode
-} from "react";
+    forwardRef} from "react";
 import GridGroup from "./GridGroup";
 import Item from "./Item";
 import Stack from "./Stack";
 import {ReactType} from "../util/common";
 
-type GridGroupItemProps = {
-    item: ReactNode
-};
-
 const GridGroupItem = forwardRef((props, ref) => {
-    let {item} = props;
+    let {item, onClose} = props;
 
     function isGridGroup(x: ReactType): x is ReactType {
         return (x as GridGroup).type.prototype instanceof GridGroup;
@@ -33,7 +26,7 @@ const GridGroupItem = forwardRef((props, ref) => {
     } else if (isStack(item)) {
         return cloneElement(item, {itemRef: ref});
     } else if (isItem(item)) {
-        return (<Stack itemRef={ref}>
+        return (<Stack itemRef={ref} onClose={onClose}>
             {item}
         </Stack>);
     }

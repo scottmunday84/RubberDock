@@ -1,7 +1,11 @@
-$resizerSize: 5px;
-$itemBackgroundColor: #212121;
 $layoutBackgroundColor: #0e0e0e;
 $layoutForegroundColor: #f3f3f3;
+$itemBackgroundColor: #212121;
+$resizerSize: 5px;
+$scrollbarBackgroundColor: $itemBackgroundColor;
+$scrollbarForegroundColor: #313131;
+$dragAndDropColor: #313131;
+$dragAndDropBorder: $itemBackgroundColor dashed 3px;
 
 %expand {
   width: 100%;
@@ -16,6 +20,52 @@ $layoutForegroundColor: #f3f3f3;
   }
 }
 
+%dragAndDrop {
+  content: '';
+  background-color: $dragAndDropColor;
+  border: $dragAndDropBorder;
+  opacity: 0.75;
+}
+
+%full {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+%topSide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 50%;
+  left: 0;
+}
+
+%rightSide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+}
+
+%bottomSide {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+%leftSide {
+  top: 0;
+  right: 50%;
+  bottom: 0;
+  left: 0;
+}
+
 %grid {
   display: flex;
   flex-wrap: nowrap;
@@ -23,7 +73,27 @@ $layoutForegroundColor: #f3f3f3;
   @extend %expand;
 }
 
-.untitled-layout {
+@mixin scrollbar() {
+  &::-webkit-scrollbar {
+    visibility: hidden;
+    width: 12px;
+  }
+  &:hover {
+    &::-webkit-scrollbar {
+      width: 12px;
+    }
+    &::-webkit-scrollbar-track {
+      background: $scrollbarBackgroundColor;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: $scrollbarForegroundColor;
+      border: 3px solid $scrollbarBackgroundColor;
+      border-radius: 20px;
+    }
+  }
+}
+
+.rubber-dock {
   &__layout {
     @extend %grid;
     background-color: $layoutBackgroundColor;
@@ -33,7 +103,7 @@ $layoutForegroundColor: #f3f3f3;
   &__row {
     @extend %grid;
     flex-direction: row;
-    .untitled-layout__resizer {
+    .rubber-dock__resizer {
       @extend %resizer;
       width: $resizerSize;
       height: 100%;
@@ -46,7 +116,7 @@ $layoutForegroundColor: #f3f3f3;
   &__column {
     @extend %grid;
     flex-direction: column;
-    .untitled-layout__resizer {
+    .rubber-dock__resizer {
       @extend %resizer;
       width: 100%;
       height: $resizerSize;
@@ -58,45 +128,77 @@ $layoutForegroundColor: #f3f3f3;
 
   &__stack {
     @extend %expand;
+    position: relative;
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    overflow: hidden;
     &__item-tabs {
-      .untitled-layout__item-tab {
-        display: flex;
+      .rubber-dock__item-tab {
         @extend %expand;
+        @include scrollbar();
+        display: flex;
         line-height: 32px;
         height: 32px;
         max-height: 32px;
-        .untitled-layout__item-tab__label {
+        transition: opacity 0.5s ease-in;
+        opacity: 0;
+        &.active {
+          opacity: 1;
+        }
+        .rubber-dock__item-tab__label {
           display: inline-block;
           padding: 0 10px 0 15px;
           background-color: $itemBackgroundColor;
+        }
+        .rubber-dock__item-tab__button-bar {
+          opacity: 1;
         }
       }
     }
     &__items {
       @extend %expand;
-      .untitled-layout__item {
+      .rubber-dock__item {
         @extend %expand;
+        @include scrollbar();
+        overflow: auto;
         background-color: $itemBackgroundColor;
+        opacity: 0;
         transition: opacity 0.5s ease-in;
         &.active {
           opacity: 1;
         }
-        &.maximize {
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          background-color: $layoutBackgroundColor;
+        &.fullscreen {
+          @extend %full;
+          position: fixed;
+          z-index: 1000;
         }
-        .untitled-layout__item__container {
-          .untitled-layout__item__body {
+        .rubber-dock__item__container {
+          .rubber-dock__item__body {
             padding: 15px;
           }
         }
       }
     }
+  }
+
+  &__psuedo-row-before::after {
+    @extend %dragAndDrop;
+    @extend %topSide;
+  }
+
+  &__pseudo-row-after::after {
+    @extend %dragAndDrop;
+    @extend %bottomSide;
+  }
+
+  &__psuedo-column-before::after {
+    @extend %dragAndDrop;
+    @extend %leftSide;
+  }
+
+  &__pseudo-column-after::after {
+    @extend %dragAndDrop;
+    @extend %rightSide;
   }
 }

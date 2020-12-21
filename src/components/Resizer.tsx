@@ -6,11 +6,11 @@ class Resizer extends Component {
     }
 
     render() {
-        return (<ResizerBody {...this.props} onMouseMove={this.onMouseMove} />);
+        return (<ResizerInner {...this.props} onMouseMove={this.onMouseMove} />);
     }
 }
 
-const ResizerBody = props => {
+const ResizerInner = props => {
     let {itemRef, onMouseMove: _onMouseMove} = props;
     let left, right;
     const ref = useRef();
@@ -31,7 +31,7 @@ const ResizerBody = props => {
 
     return (<div
         ref={ref}
-        className="untitled-layout__resizer"
+        className="rubber-dock__resizer"
         onMouseDown={() => onMouseDown()}>&nbsp;</div>);
 }
 

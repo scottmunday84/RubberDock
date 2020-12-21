@@ -8,8 +8,8 @@ class ColumnResizer extends Resizer {
         let startFlexBasisLeft = getFlexBasis(left);
         let startFlexBasisRight = getFlexBasis(right);
         let startFlexBasis = startFlexBasisLeft + startFlexBasisRight;
-        let flexBasisLeft = Math.max(15.0 / 100.0 * startFlexBasis, relativeY / leftHeight * startFlexBasisLeft);
-        let flexBasisRight = Math.max(15.0 / 100.0 * startFlexBasis, startFlexBasis - flexBasisLeft);
+        let flexBasisLeft = Math.max(10.0 / 100.0 * startFlexBasis, relativeY / leftHeight * startFlexBasisLeft);
+        let flexBasisRight = Math.max(10.0 / 100.0 * startFlexBasis, startFlexBasis - flexBasisLeft);
         flexBasisLeft = startFlexBasis - flexBasisRight;
         left.style.flexBasis = flexBasisLeft + '%';
         right.style.flexBasis = flexBasisRight + '%';

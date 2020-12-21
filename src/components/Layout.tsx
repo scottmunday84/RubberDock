@@ -6,6 +6,7 @@ import Item from "./Item";
 import Stack from "./Stack";
 import Row from "./Row";
 import Column from "./Column";
+import {composeWithDevTools} from "redux-devtools-extension";
 
 type LayoutComponent = Row | Column | Stack | Item;
 type LayoutProps = {
@@ -14,11 +15,11 @@ type LayoutProps = {
 
 const Layout: FunctionComponent<LayoutProps> = props => {
     let {children} = props;
-    let store = createStore(reducer);
+    let store = createStore(reducer, composeWithDevTools());
 
     return (
         <Provider store={store}>
-            <div className="untitled-layout__layout">
+            <div className="rubber-dock__layout">
                 {children}
             </div>
         </Provider>);
