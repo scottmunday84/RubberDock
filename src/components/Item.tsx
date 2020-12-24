@@ -1,20 +1,18 @@
 import React, {useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
-import {deregisterItem, registerItem, toggleFullscreen} from "../actions/ItemActions";
+import {registerItem, toggleItemFullscreen} from "../actions/ItemActions";
 
 const Item = props => {
-    let {children, isFullscreen, isFocused, registerItem, deregisterItem, toggleFullscreen} = props;
+    let {children, isFullscreen, isFocused, registerItem, toggleFullscreen} = props;
     let ref = useRef();
     const [isActive, setIsActive] = useState(false);
     useEffect(() => {
         setIsActive(true);
         registerItem();
-
-        return deregisterItem;
     }, []);
 
     return (<div ref={ref} className={`rubber-dock__item ${isActive ? 'active' : ''} ${isFullscreen ? 'fullscreen' : ''} ${isFocused ? 'focused' : ''}`}>
-        {isFullscreen ? (<i className="fas fa-window-minimize" onClick={toggleFullscreen} />) : ''}
+        {isFullscreen ? (<i className="far fa-window-minimize fa-2x" onClick={toggleFullscreen} />) : ''}
         <div className="rubber-dock__item__container">
             <div className="rubber-dock__item__body">
                 {children}
@@ -32,9 +30,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    registerItem: registerItem(dispatch).bind(null, ownProps.id),
-    deregisterItem: deregisterItem(dispatch).bind(null, ownProps.id),
-    toggleFullscreen: toggleFullscreen(dispatch).bind(null, ownProps.id)
+    registerItem: registerItem(dispatch).bind(null, ownProps.stackId, ownProps.stackIndex, ownProps.id, ownProps.item, ownProps?.focus, ownProps?.state),
+    toggleItemFullscreen: toggleItemFullscreen(dispatch).bind(null, ownProps.id)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Item);

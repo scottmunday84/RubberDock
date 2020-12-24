@@ -3,6 +3,7 @@ $layoutForegroundColor: #f3f3f3;
 $itemBackgroundColor: #212121;
 $resizerSize: 5px;
 $resizerColor: #ccc;
+$scrollbarSize: 8px;
 $scrollbarBackgroundColor: $itemBackgroundColor;
 $scrollbarForegroundColor: #313131;
 $dragAndDropColor: #313131;
@@ -77,20 +78,22 @@ $focusedForegroundColor: #fb1;
 
 @mixin scrollbar() {
   &::-webkit-scrollbar {
-    visibility: hidden;
-    width: 12px;
+    background-color: $scrollbarBackgroundColor;
+    width: $scrollbarSize;
+    height: $scrollbarSize;
   }
   &:hover {
     &::-webkit-scrollbar {
-      width: 12px;
+      width: $scrollbarSize;
+      height: $scrollbarSize;
     }
     &::-webkit-scrollbar-track {
-      background: $scrollbarBackgroundColor;
+      background-color: $scrollbarBackgroundColor;
     }
     &::-webkit-scrollbar-thumb {
       background-color: $scrollbarForegroundColor;
-      border: 3px solid $scrollbarBackgroundColor;
-      border-radius: 20px;
+      border: 3px solid $scrollbarForegroundColor;
+      border-radius: 4px;
     }
   }
 }
@@ -136,15 +139,23 @@ $focusedForegroundColor: #fb1;
     flex: 1 1 auto;
     overflow: hidden;
     &__item-tabs {
+      @include scrollbar();
       display: flex;
       flex-direction: row;
+      flex: 0 0 auto;
+      overflow-x: scroll;
+      overflow-y: hidden;
       .rubber-dock__item-tab {
         @extend %expand;
-        @include scrollbar();
+        background-color: $itemBackgroundColor;
+        margin-right: 5px;
         display: flex;
+        flex: 0 0;
+        flex-basis: content;
         line-height: 32px;
         height: 32px;
         max-height: 32px;
+        white-space: nowrap;
         transition: opacity 0.5s ease-in;
         opacity: 0;
         &.active {
@@ -153,10 +164,18 @@ $focusedForegroundColor: #fb1;
         .rubber-dock__item-tab__label {
           display: inline-block;
           padding: 0 10px 0 15px;
-          background-color: $itemBackgroundColor;
         }
         .rubber-dock__item-tab__button-bar {
+          display: flex;
+          align-content: center;
+          justify-content: center;
           opacity: 1;
+          i {
+            margin-top: 2px;
+            &:hover {
+              color: $focusedForegroundColor;
+            }
+          }
         }
         &.focused {
           .rubber-dock__item-tab__label {

@@ -1,5 +1,7 @@
 import {ActionTypes} from "../util/common";
 
-export const registerItem = dispatch => (id, ref, state = null) => dispatch({type: ActionTypes.ItemRegister, payload: {id, ref, state}});
-export const deregisterItem = dispatch => id => dispatch({type: ActionTypes.ItemDeregister, payload: id});
-export const toggleFullscreen = dispatch => id => dispatch({type: ActionTypes.ToggleFullscreen, payload: id});
+export const registerItem = dispatch => (stackId, stackIndex, id, item, focus, state = null) => dispatch({type: ActionTypes.ItemRegister, payload: {stackId, stackIndex, id, item, focus, state}});
+export const deregisterItem = dispatch => (stackId, id) => dispatch({type: ActionTypes.ItemDeregister, payload: {stackId, id}});
+export const dropItem = dispatch => (stackId, id) => dispatch({type: ActionTypes.ItemDrop, payload: {stackId, id}});
+export const focusItem = dispatch => (stackId, id) => dispatch({type: ActionTypes.ItemFocus, payload: {stackId, id}});
+export const toggleItemFullscreen = dispatch => id => dispatch({type: ActionTypes.ItemToggleFullscreen, payload: id});

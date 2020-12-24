@@ -7,7 +7,7 @@ import Stack from "./Stack";
 import {ReactType} from "../util/common";
 
 const GridGroupItem = forwardRef((props, ref) => {
-    let {item, onClose} = props;
+    let {id, item, onClose} = props;
 
     function isGridGroup(x: ReactType): x is ReactType {
         return (x as GridGroup).type.prototype instanceof GridGroup;
@@ -22,11 +22,11 @@ const GridGroupItem = forwardRef((props, ref) => {
     }
 
     if (isGridGroup(item)) {
-        return cloneElement(item, {itemRef: ref});
+        return cloneElement(item, {id, itemRef: ref});
     } else if (isStack(item)) {
-        return cloneElement(item, {itemRef: ref, onClose});
+        return cloneElement(item, {id, itemRef: ref, onClose});
     } else if (isItem(item)) {
-        return (<Stack itemRef={ref} onClose={onClose}>
+        return (<Stack id={id} itemRef={ref} onClose={onClose}>
             {item}
         </Stack>);
     }
