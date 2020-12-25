@@ -30,7 +30,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    registerItem: registerItem(dispatch).bind(null, ownProps.stackId, ownProps.stackIndex, ownProps.id, ownProps.item, ownProps?.focus, ownProps?.state),
+    registerItem: registerItem(dispatch).bind(null, ownProps.stackId, ownProps.stackIndex, ownProps.onStackClose, ownProps.id, ownProps.item, ownProps?.focus, ownProps?.state),
     toggleItemFullscreen: toggleItemFullscreen(dispatch).bind(null, ownProps.id)
 });
 

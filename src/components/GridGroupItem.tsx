@@ -32,7 +32,6 @@ const GridGroupItem = forwardRef((props, ref) => {
     }
 
     return null;
-
-}
+});
 
 export default GridGroupItem;

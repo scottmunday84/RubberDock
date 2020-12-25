@@ -2,7 +2,7 @@ import {ActionTypes} from "../util/common";
 
 let initialState = {};
 
-const registerItem = (state, id, item, itemState) => {
+const registerItem = (state, id, item = null, itemState = null) => {
     if (id in state) {
         let item = state[id];
 
@@ -74,6 +74,8 @@ const reducer = (state = initialState, action) => {
             return deregisterItem(state, action.payload.id);
         case ActionTypes.ItemToggleFullscreen:
             return toggleItemFullscreen(state, action.payload);
+        case ActionTypes.ItemDrop:
+            return registerItem(state, action.payload.id);
         default:
             return state;
     }

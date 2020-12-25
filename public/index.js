@@ -8,7 +8,7 @@ ReactDOM.render((
       <l.Item tab="Tab 1">
         <div>here</div>
       </l.Item>
-      <l.Item tab="Tab 2">
+      <l.Item tab="Tab 2" state={{foo: 'bar'}}>
         <div>there</div>
       </l.Item>
       <l.Stack>

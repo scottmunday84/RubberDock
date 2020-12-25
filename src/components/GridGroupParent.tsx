@@ -12,10 +12,6 @@ const GridGroupParent = props => {
     }));
     const [children, setChildren] = useState(_children);
 
-    if (children.length === 0) {  // Automatically collapse parent if there are no children
-        return null;
-    }
-
     return (
         <div ref={ref} className={className}>
             {children.map((child, index) => {

@@ -17,6 +17,7 @@ const Stack = props => {
         id,
         items,
         focus,
+        onClose: onStackClose,
         registerStack,
         deregisterStack,
         deregisterItem,
@@ -33,6 +34,9 @@ const Stack = props => {
     useEffect(() => {
         let current = itemRef.current;
         setTabsHeight(current.firstElementChild.offsetHeight);
+        registerStack();
+
+        return deregisterStack;
     }, []);
 
     const onDragOver = event => {
@@ -48,40 +52,33 @@ const Stack = props => {
             dropItem(itemId);
 
             if (event.dataTransfer.effectAllowed === 'move') {
-                setTimeout(() => deregisterItem(stackId, itemId), 0);
+                deregisterItem(stackId, itemId);
             }
         }
     };
 
-    useEffect(() => {
-        registerStack();
+    return (<div ref={itemRef} className={`rubber-dock__stack active`}>
+        <div className={`rubber-dock__stack__item-tabs`} onDragOver={onDragOver} onDrop={onDrop}>
+            {(items || children).map((item, index) => {
+                let {id: itemId} = item;
+                let _item = item?.item || item;
+                let {tab} = _item.props;
 
-        return deregisterStack;
-    }, []);
+                return (<ItemTab key={itemId} id={itemId} stackId={id} stackIndex={index} isFocused={focus === itemId}>
+                    {tab}
+                </ItemTab>);
+            })}
+        </div>
+        <div className={`rubber-dock__stack__items`} style={{height: `calc(100% - ${tabsHeight}px)`}}>
+            {(items || children).map((item, index) => {
+                let {id: itemId} = item;
+                let _item = item?.item || item;
 
-    return (
-        <div ref={itemRef} className={`rubber-dock__stack active`}>
-            <div className={`rubber-dock__stack__item-tabs`} onDragOver={onDragOver} onDrop={onDrop}>
-                {(items || children).map((item, index) => {
-                    let {id: itemId} = item;
-                    let _item = item?.item || item;
-                    let {tab} = _item.props;
-
-                    return (<ItemTab key={itemId} id={itemId} stackId={id} stackIndex={index} isFocused={focus === itemId}>
-                        {tab}
-                    </ItemTab>);
-                })}
-            </div>
-            <div className={`rubber-dock__stack__items`} style={{height: `calc(100% - ${tabsHeight}px)`}}>
-                {(items || children).map((item, index) => {
-                    let {id: itemId} = item;
-                    let _item = item?.item || item;
-
-                    return cloneElement(_item, {key: itemId, id: itemId, stackId: id, stackIndex: index, item: _item, isFocused: focus === itemId});
-                })}
-            </div>
-        </div>);
-}
+                return cloneElement(_item, {key: itemId, id: itemId, stackId: id, stackIndex: index, onStackClose, item: _item, isFocused: focus === itemId});
+            })}
+        </div>
+    </div>);
+};
 
 const mapStateToProps = (state, ownProps) => {
     const stack = state.stacks[ownProps.id];
@@ -92,10 +89,10 @@ const mapStateToProps = (state, ownProps) => {
             id: x})),
         focus: stack?.focus
     };
-}
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    registerStack: registerStack(dispatch).bind(null, ownProps.id),
+    registerStack: registerStack(dispatch).bind(null, ownProps.id, ownProps.onClose),
     deregisterStack: deregisterStack(dispatch).bind(null, ownProps.id),
     deregisterItem: deregisterItem(dispatch),
     dropItem: dropItem(dispatch).bind(null, ownProps.id),

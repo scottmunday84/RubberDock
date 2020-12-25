@@ -2,7 +2,7 @@ import {ActionTypes} from "../util/common";
 
 let initialState = {};
 
-const registerStack = (state, id) => {
+const registerStack = (state, id, onClose) => {
     if (id in state) {
         return state;
     }
@@ -11,7 +11,8 @@ const registerStack = (state, id) => {
         ...state,
         [id]: {
             items: [],
-            focus: null
+            focus: null,
+            onClose
         }
     };
 };
@@ -22,20 +23,24 @@ const deregisterStack = (state, id) => {
     }
 
     // Remove stack
-    let {[id]: _, ...stacks} = state;
+    let {[id]: stack, ...stacks} = state;
+    stack.onClose();
 
     return stacks;
 };
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case ActionTypes.StackRegister:
-            return registerStack(state, action.payload);
+        case ActionTypes.StackRegister: {
+            const {id, onClose} = action.payload;
+
+            return registerStack(state, id, onClose);
+        }
         case ActionTypes.StackDeregister:
             return deregisterStack(state, action.payload);
         case ActionTypes.ItemRegister: {
-            const {stackId, stackIndex, id: itemId, focus: itemFocus = false} = action.payload;
-            const _state = registerStack(state, stackId);
+            const {stackId, stackIndex, onStackClose, id: itemId, focus: itemFocus = false} = action.payload;
+            const _state = registerStack(state, stackId, onStackClose);
             const stack = _state[stackId];
             const getItemIndexById = x => stack.items.findIndex(y => y === x);
 
@@ -55,6 +60,7 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 [stackId]: {
+                    ...stack,
                     items,
                     focus
                 }
@@ -90,6 +96,7 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 [stackId]: {
+                    ...stack,
                     items,
                     focus
                 }
