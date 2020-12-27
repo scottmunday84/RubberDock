@@ -79,11 +79,7 @@ const reducer = (state = initialState, action) => {
             let items = [...stack.items];
             items.splice(index, 1);
 
-            // Remove the stack if no more items exist on the stack
-            if (items.length === 0) {
-                // return deregisterStack(state, stackId);
-            }
-
+            // Refocus the tab
             let focus = stack.focus;
             if (itemId === stack.focus) {
                 if (index < items.length) {
@@ -103,7 +99,7 @@ const reducer = (state = initialState, action) => {
             };
         }
         case ActionTypes.ItemDrop: {
-            const {stackId, id: itemId} = action.payload;
+            const {stackId, newId: itemId} = action.payload;
             const stack = state[stackId];
             const getItemIndexById = x => stack.items.findIndex(y => y === x);
             if (getItemIndexById(itemId) !== -1) {

@@ -131,7 +131,7 @@ $focusedForegroundColor: #fb1;
     }
   }
 
-  &__stack {
+  &__hstack {
     @extend %expand;
     position: relative;
     display: flex;
@@ -200,6 +200,92 @@ $focusedForegroundColor: #fb1;
         }
         &.fullscreen {
           @extend %full;
+          display: block;
+          opacity: 1;
+          position: fixed;
+          z-index: 1000;
+        }
+        .rubber-dock__item__container {
+          .rubber-dock__item__body {
+            padding: 15px;
+          }
+        }
+      }
+    }
+  }
+
+  &__vstack {
+    @extend %expand;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    overflow: hidden;
+    &__item-tabs {
+      @include scrollbar();
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      .rubber-dock__item-tab {
+        @extend %expand;
+        background-color: $itemBackgroundColor;
+        margin-bottom: 5px;
+        display: flex;
+        flex: 0 0;
+        flex-basis: content;
+        line-height: 32px;
+        height: 32px;
+        max-height: 32px;
+        white-space: nowrap;
+        transition: opacity 0.5s ease-in;
+        opacity: 0;
+        &.active {
+          opacity: 1;
+        }
+        .rubber-dock__item-tab__label {
+          width: 100%;
+          display: inline-block;
+          padding: 0 10px 0 15px;
+        }
+        .rubber-dock__item-tab__button-bar {
+          display: flex;
+          align-content: center;
+          justify-content: center;
+          opacity: 1;
+          i {
+            margin-top: 2px;
+            &:hover {
+              color: $focusedForegroundColor;
+            }
+          }
+        }
+        &.focused {
+          .rubber-dock__item-tab__label {
+            color: $focusedForegroundColor;
+          }
+        }
+      }
+    }
+    &__items {
+      @extend %expand;
+      .rubber-dock__item {
+        @extend %expand;
+        @include scrollbar();
+        display: none;
+        overflow: auto;
+        background-color: $itemBackgroundColor;
+        opacity: 0;
+        transition: opacity 0.5s ease-in;
+        &.active.focused {
+          display: block;
+          opacity: 1;
+        }
+        &.fullscreen {
+          @extend %full;
+          display: block;
+          opacity: 1;
           position: fixed;
           z-index: 1000;
         }

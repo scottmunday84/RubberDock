@@ -1,9 +1,9 @@
-import React, {cloneElement, Component, forwardRef, Fragment, useRef} from "react";
+import React, {cloneElement, Component, forwardRef, useRef} from "react";
 import {v4 as uuid} from "uuid";
 import Stack from "./Stack";
 import Item from "./Item";
 
-class GridGroup extends Component<any, any> {
+class GridGroup extends Component {
     type: any;
     className;
     resizer;

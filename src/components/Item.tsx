@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {registerItem, toggleItemFullscreen} from "../actions/ItemActions";
 
 const Item = props => {
-    let {children, isFullscreen, isFocused, registerItem, toggleFullscreen} = props;
+    let {children, isFullscreen, isFocused, registerItem, toggleItemFullscreen} = props;
     let ref = useRef();
     const [isActive, setIsActive] = useState(false);
     useEffect(() => {
@@ -12,7 +12,7 @@ const Item = props => {
     }, []);
 
     return (<div ref={ref} className={`rubber-dock__item ${isActive ? 'active' : ''} ${isFullscreen ? 'fullscreen' : ''} ${isFocused ? 'focused' : ''}`}>
-        {isFullscreen ? (<i className="far fa-window-minimize fa-2x" onClick={toggleFullscreen} />) : ''}
+        {isFullscreen ? (<i className="far fa-window-minimize fa-lg" onClick={toggleItemFullscreen} />) : ''}
         <div className="rubber-dock__item__container">
             <div className="rubber-dock__item__body">
                 {Children.map(children, child => {

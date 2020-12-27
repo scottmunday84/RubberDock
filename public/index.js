@@ -31,7 +31,7 @@ ReactDOM.render((
           <Something>
           </Something>
         </l.Item>
-        <l.Stack>
+        <l.Stack vertical={true}>
           <l.Item tab="Tab 5a">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam blandit a leo id porttitor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin dapibus nec risus eu viverra. Praesent pharetra mollis est, molestie fringilla ex pellentesque sit amet. Proin nec lacus at velit vulputate maximus. Nam rutrum, quam sit amet hendrerit luctus, tellus arcu fringilla urna, eget lobortis magna felis sed nibh. Fusce id nunc ac est scelerisque fringilla. Curabitur fringilla justo id odio egestas, vitae egestas lacus pulvinar. Nullam porta turpis in faucibus vulputate.
 

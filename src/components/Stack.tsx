@@ -21,7 +21,8 @@ const Stack = props => {
         registerStack,
         deregisterStack,
         deregisterItem,
-        dropItem} = props;
+        dropItem,
+        vertical = false} = props;
 
     children = children instanceof Array ? children : [children];
     children = children.map(x => ({
@@ -32,12 +33,19 @@ const Stack = props => {
     const [tabsHeight, setTabsHeight] = useState();
 
     useEffect(() => {
+        if (vertical) {
+            setTabsHeight(0);
+
+            return;
+        }
+
+        // Get the tab height
         let current = itemRef.current;
         setTabsHeight(current.firstElementChild.offsetHeight);
         registerStack();
 
         return deregisterStack;
-    }, []);
+    }, [vertical]);
 
     const onDragOver = event => {
         event.preventDefault();
@@ -49,7 +57,7 @@ const Stack = props => {
         const itemId = event.dataTransfer.getData('id');
 
         if (type === 'item' && items.findIndex(x => x.id === itemId) === -1) {
-            dropItem(itemId);
+            dropItem(itemId, uuid());
 
             if (event.dataTransfer.effectAllowed === 'move') {
                 deregisterItem(stackId, itemId);
@@ -63,8 +71,10 @@ const Stack = props => {
         return null;
     }
 
-    return (<div ref={itemRef} className={`rubber-dock__stack active`}>
-        <div className={`rubber-dock__stack__item-tabs`} onDragOver={onDragOver} onDrop={onDrop}>
+    const className = vertical ? 'rubber-dock__vstack' : 'rubber-dock__hstack';
+
+    return (<div ref={itemRef} className={`${className} active`}>
+        <div className={`${className}__item-tabs`} onDragOver={onDragOver} onDrop={onDrop}>
             {(items || children).map((item, index) => {
                 let {id: itemId} = item;
                 let _item = item?.item || item;
@@ -75,7 +85,7 @@ const Stack = props => {
                 </ItemTab>);
             })}
         </div>
-        <div className={`rubber-dock__stack__items`} style={{height: `calc(100% - ${tabsHeight}px)`}}>
+        <div className={`${className}__items`} style={{height: `calc(100% - ${tabsHeight}px)`}}>
             {(items || children).map((item, index) => {
                 let {id: itemId} = item;
                 let _item = item?.item || item;

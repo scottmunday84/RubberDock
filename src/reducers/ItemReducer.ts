@@ -4,23 +4,14 @@ let initialState = {};
 
 const registerItem = (state, id, item = null) => {
     if (id in state) {
-        let item = state[id];
-
-        return {
-            ...state,
-            [id]: {
-                ...item,
-                refs: item.refs + 1,
-            }
-        };
+        return state;
     }
 
     return {
         ...state,
         [id]: {
-            item,
-            isFullscreen: false,
-            refs: 1
+            item: {...item},
+            isFullscreen: false
         }
     };
 }
@@ -30,22 +21,18 @@ const deregisterItem = (state, id) => {
         return state;
     }
 
-    // If the refs are greater than 1
-    let item = state[id];
-    if (item.refs > 1) {
-        return {
-            ...state,
-            [id]: {
-                ...item,
-                refs: item.refs - 1
-            }
-        }
-    }
-
     // Remove item
     let {[id]: _, ...items} = state;
 
     return items;
+};
+
+const copyItem = (state, stackId, id, newId) => {
+    if (!(id in state) || newId in state) {
+        return state;
+    }
+
+    return registerItem(state, newId, state[id].item);
 };
 
 const toggleItemFullscreen = (state, id) => {
@@ -71,10 +58,13 @@ const reducer = (state = initialState, action) => {
         }
         case ActionTypes.ItemDeregister:
             return deregisterItem(state, action.payload.id);
+        case ActionTypes.ItemDrop: {
+            const {stackId, id, newId} = action.payload;
+
+            return copyItem(state, stackId, id, newId);
+        }
         case ActionTypes.ItemToggleFullscreen:
             return toggleItemFullscreen(state, action.payload);
-        case ActionTypes.ItemDrop:
-            return registerItem(state, action.payload.id);
         default:
             return state;
     }
