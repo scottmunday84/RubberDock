@@ -26,7 +26,7 @@ const Stack = props => {
     children = children instanceof Array ? children : [children];
     children = children.map(x => ({
         ...x,
-        id: x.id || uuid()
+        id: x.id || uuid(),
     }));
 
     const [tabsHeight, setTabsHeight] = useState();
@@ -56,6 +56,12 @@ const Stack = props => {
             }
         }
     };
+
+    if ((items || children).length === 0) {
+        onStackClose();
+
+        return null;
+    }
 
     return (<div ref={itemRef} className={`rubber-dock__stack active`}>
         <div className={`rubber-dock__stack__item-tabs`} onDragOver={onDragOver} onDrop={onDrop}>

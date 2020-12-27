@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {Children, cloneElement, isValidElement, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {registerItem, toggleItemFullscreen} from "../actions/ItemActions";
 
@@ -15,7 +15,13 @@ const Item = props => {
         {isFullscreen ? (<i className="far fa-window-minimize fa-2x" onClick={toggleFullscreen} />) : ''}
         <div className="rubber-dock__item__container">
             <div className="rubber-dock__item__body">
-                {children}
+                {Children.map(children, child => {
+                    if (isValidElement(child)) {
+                        return cloneElement(child, props);
+                    }
+
+                    return child;
+                })}
             </div>
         </div>
     </div>);
@@ -30,7 +36,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    registerItem: registerItem(dispatch).bind(null, ownProps.stackId, ownProps.stackIndex, ownProps.onStackClose, ownProps.id, ownProps.item, ownProps?.focus, ownProps?.state),
+    registerItem: registerItem(dispatch).bind(null, ownProps.stackId, ownProps.stackIndex, ownProps.onStackClose, ownProps.id, ownProps.item, ownProps?.focus),
     toggleItemFullscreen: toggleItemFullscreen(dispatch).bind(null, ownProps.id)
 });
 

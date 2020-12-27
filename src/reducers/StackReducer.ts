@@ -81,7 +81,7 @@ const reducer = (state = initialState, action) => {
 
             // Remove the stack if no more items exist on the stack
             if (items.length === 0) {
-                return deregisterStack(state, stackId);
+                // return deregisterStack(state, stackId);
             }
 
             let focus = stack.focus;

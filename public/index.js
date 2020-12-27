@@ -2,6 +2,10 @@ import * as React from 'react';
 import ReactDOM from "react-dom";
 import * as l from "../src/main";
 
+const Something = ({id, ...props}) => {
+  return (<div>{id}</div>);
+}
+
 ReactDOM.render((
   <l.Layout>
     <l.Row>
@@ -24,7 +28,8 @@ ReactDOM.render((
       </l.Stack>
       <l.Column>
         <l.Item tab="Tab 4">
-          yeahhhh....
+          <Something>
+          </Something>
         </l.Item>
         <l.Stack>
           <l.Item tab="Tab 5a">

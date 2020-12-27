@@ -2,7 +2,7 @@ import {ActionTypes} from "../util/common";
 
 let initialState = {};
 
-const registerItem = (state, id, item = null, itemState = null) => {
+const registerItem = (state, id, item = null) => {
     if (id in state) {
         let item = state[id];
 
@@ -20,8 +20,7 @@ const registerItem = (state, id, item = null, itemState = null) => {
         [id]: {
             item,
             isFullscreen: false,
-            refs: 1,
-            state: itemState
+            refs: 1
         }
     };
 }
@@ -66,9 +65,9 @@ const toggleItemFullscreen = (state, id) => {
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case ActionTypes.ItemRegister: {
-            const {id, item, state: itemState} = action.payload;
+            const {id, item} = action.payload;
 
-            return registerItem(state, id, item, itemState);
+            return registerItem(state, id, item);
         }
         case ActionTypes.ItemDeregister:
             return deregisterItem(state, action.payload.id);
