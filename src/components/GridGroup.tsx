@@ -1,9 +1,9 @@
-import React, {cloneElement, Component, forwardRef, useRef} from "react";
+import React, {cloneElement, Component, createRef, forwardRef, useEffect, useRef, useState} from "react";
 import {v4 as uuid} from "uuid";
 import Stack from "./Stack";
 import Item from "./Item";
 
-class GridGroup extends Component {
+class GridGroup extends Component<any, any> {
     type: any;
     className;
     resizer;
@@ -13,10 +13,9 @@ class GridGroup extends Component {
 
         // Set children
         let children = props.children instanceof Array ? props.children : [props.children];
-        children = children.map((item, index) => ({
+        children = children.map(item => ({
             id: uuid(),
-            item: cloneElement(item),
-            canResize: index < children.length - 1
+            item: cloneElement(item)
         }));
 
         this.state = {
@@ -32,9 +31,7 @@ class GridGroup extends Component {
             return;
         }
         children.splice(index, 1);
-        if (children.length) {
-            children[children.length - 1]?.canResize = false;
-        }
+
         this.setState({
             children
         });
@@ -43,14 +40,18 @@ class GridGroup extends Component {
     render() {
         const {className, resizer} = this;
         const {children} = this.state;
+        const {onClose = null} = this.props;
 
         if (children.length === 0) {
+            if (onClose !== null) {
+                onClose();
+            }
             return null;
         }
 
         return (<div className={className}>
             {children.map((child, index) => {
-                return (<GridGroupInner key={child.id} id={child.id} item={child.item} onClose={() => this.onClose(child.id)} resizer={child.canResize ? resizer : null} />);
+                return (<GridGroupInner key={child.id} id={child.id} item={child.item} onClose={() => this.onClose(child.id)} resizer={index < children.length - 1 ? resizer : null} />);
             })}
         </div>);
     }
@@ -73,7 +74,7 @@ const GridGroupItem = forwardRef((props, ref) => {
     const isItem = (x): x is Item => x.type === Item;
 
     if (isGridGroup(item)) {
-        return cloneElement(item, {id});
+        return cloneElement(item, {id, onClose});
     } else if (isStack(item)) {
         return cloneElement(item, {id, itemRef: ref, onClose});
     } else if (isItem(item)) {
