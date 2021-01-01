@@ -25,8 +25,9 @@ $focusedForegroundColor: #fb1;
 
 %dragAndDrop {
   content: '';
+  pointer-events: none;
   background-color: $dragAndDropColor;
-  border: $dragAndDropBorder;
+  border-inline: $dragAndDropBorder;
   opacity: 0.75;
 }
 
@@ -63,6 +64,7 @@ $focusedForegroundColor: #fb1;
 }
 
 %leftSide {
+  position: absolute;
   top: 0;
   right: 50%;
   bottom: 0;
@@ -145,6 +147,7 @@ $focusedForegroundColor: #fb1;
       flex: 0 0 auto;
       overflow-x: scroll;
       overflow-y: hidden;
+      z-index: 1000;
       .rubber-dock__item-tab {
         @extend %expand;
         background-color: $itemBackgroundColor;
@@ -228,6 +231,7 @@ $focusedForegroundColor: #fb1;
       flex: 0 0 auto;
       overflow-x: hidden;
       overflow-y: scroll;
+      z-index: 1000;
       .rubber-dock__item-tab {
         @extend %expand;
         background-color: $itemBackgroundColor;
@@ -317,4 +321,38 @@ $focusedForegroundColor: #fb1;
     @extend %dragAndDrop;
     @extend %rightSide;
   }
+}
+
+.grid-expander {
+  @extend %expand;
+  position: absolute;
+}
+
+.dragged {
+  @extend %dragAndDrop;
+  filter: grayscale(100%);
+}
+
+.dragged-before-row:after {
+  @extend %dragAndDrop;
+  @extend %topSide;
+  z-index: 1001;
+}
+
+.dragged-before-column:after {
+  @extend %dragAndDrop;
+  @extend %leftSide;
+  z-index: 1001;
+}
+
+.dragged-after-row:after {
+  @extend %dragAndDrop;
+  @extend %bottomSide;
+  z-index: 1001;
+}
+
+.dragged-after-column:after {
+  @extend %dragAndDrop;
+  @extend %rightSide;
+  z-index: 1001;
 }

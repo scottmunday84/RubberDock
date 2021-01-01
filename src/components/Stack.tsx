@@ -1,4 +1,4 @@
-import React, {cloneElement, useEffect, useState} from "react";
+import React, {cloneElement, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import ItemTab from "./ItemTab";
 import {v4 as uuid} from "uuid";
@@ -24,13 +24,16 @@ const Stack = props => {
         dropItem,
         vertical = false} = props;
 
+    const tabsRef = useRef();
     children = children instanceof Array ? children : [children];
     children = children.map(x => ({
         ...x,
         id: x.id || uuid(),
     }));
 
-    const [tabsHeight, setTabsHeight] = useState();
+    const [tabsHeight, setTabsHeight] = useState(0);
+    const [stackDraggedClass, setStackDraggedClass] = useState('');
+    const [isTabsDragged, setIsTabsDragged] = useState(false);
 
     useEffect(() => {
         if (vertical) {
@@ -40,18 +43,56 @@ const Stack = props => {
         }
 
         // Get the tab height
-        let current = itemRef.current;
-        setTabsHeight(current.firstElementChild.offsetHeight);
+        let current = tabsRef.current;
+        setTabsHeight(current.offsetHeight);
         registerStack();
 
         return deregisterStack;
     }, [vertical]);
 
-    const onDragOver = event => {
+    const onStackDragOver = event => {
+        const {left, top, width, height} = itemRef.current.getBoundingClientRect();
+        const [cx, cy] = [width / 2 + left, height / 2 + top];
+        const [dx, dy] = [event.clientX - cx, -(event.clientY - cy)];
+        let theta = Math.atan2(dy, dx) * 180 / Math.PI;
+        if (theta < 0) {
+            theta += 360;
+        }
+
+        if (theta >= 45 && theta < 135) {
+            setStackDraggedClass('dragged-before-row');
+        } else if (theta >= 135 && theta < 180) {
+            setStackDraggedClass('dragged-before-column');
+        } else if (theta >= 180 && theta < 315) {
+            setStackDraggedClass('dragged-after-row');
+        } else if ((theta >= 315 || theta < 45)) {
+            setStackDraggedClass('dragged-after-column');
+        }
+
         event.preventDefault();
     };
 
-    const onDrop = event => {
+    const onStackDragLeave = event => {
+        setStackDraggedClass('');
+    };
+
+    const onStackDrop = event => {
+        setStackDraggedClass('');
+        console.log(event);
+    };
+
+    const onTabsDragOver = event => {
+        setIsTabsDragged(true);
+        event.preventDefault();
+    };
+
+    const onTabsDragLeave = event => {
+        setIsTabsDragged(false);
+    };
+
+    const onTabsDrop = event => {
+        setIsTabsDragged(false);
+
         const type = event.dataTransfer.getData('type');
         const stackId = event.dataTransfer.getData('stackId');
         const itemId = event.dataTransfer.getData('id');
@@ -73,8 +114,9 @@ const Stack = props => {
 
     const className = vertical ? 'rubber-dock__vstack' : 'rubber-dock__hstack';
 
-    return (<div ref={itemRef} className={`${className} active`}>
-        <div className={`${className}__item-tabs`} onDragOver={onDragOver} onDrop={onDrop}>
+    return (<div ref={itemRef} className={`${className} active ${stackDraggedClass}`}>
+        <span className="grid-expander" onDragOver={onStackDragOver} onDragLeave={onStackDragLeave} onDrop={onStackDrop}>&nbsp;</span>
+        <div ref={tabsRef} className={`${className}__item-tabs ${isTabsDragged ? 'dragged' : ''}`} onDragOver={onTabsDragOver}  onDragLeave={onTabsDragLeave} onDrop={onTabsDrop}>
             {(items || children).map((item, index) => {
                 let {id: itemId} = item;
                 let _item = item?.item || item;

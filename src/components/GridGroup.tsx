@@ -1,12 +1,13 @@
-import React, {cloneElement, Component, createRef, forwardRef, useEffect, useRef, useState} from "react";
+import React, {cloneElement, Component, forwardRef, useRef} from "react";
 import {v4 as uuid} from "uuid";
 import Stack from "./Stack";
 import Item from "./Item";
+import Resizer from "./Resizer";
 
 class GridGroup extends Component<any, any> {
     type: any;
-    className;
-    resizer;
+    className: string;
+    resizer: Resizer;
 
     constructor(props) {
         super(props);
@@ -46,6 +47,7 @@ class GridGroup extends Component<any, any> {
             if (onClose !== null) {
                 onClose();
             }
+
             return null;
         }
 
