@@ -11,3 +11,13 @@ export const ActionTypes = {
     ItemFocus: 'ItemFocus',
     ItemToggleFullscreen: 'ItemToggleFullscreen'
 };
+
+export enum GridGroupType {
+    Column,
+    Row
+}
+
+export enum GridPosition {
+    Before,
+    After
+}

@@ -27,7 +27,7 @@ ReactDOM.render((
         </l.Item>
       </l.Stack>
       <l.Column>
-        <l.Item tab="Tab 4">
+        <l.Item tab={<i className={'fab fa-windows'} />}>
           <Something>
           </Something>
         </l.Item>

@@ -7,7 +7,7 @@ $scrollbarSize: 8px;
 $scrollbarBackgroundColor: $itemBackgroundColor;
 $scrollbarForegroundColor: #313131;
 $dragAndDropColor: #313131;
-$dragAndDropBorder: $itemBackgroundColor dashed 3px;
+$dragAndDropBorder: $layoutForegroundColor dashed 3px;
 $focusedForegroundColor: #fb1;
 
 %expand {
@@ -27,7 +27,7 @@ $focusedForegroundColor: #fb1;
   content: '';
   pointer-events: none;
   background-color: $dragAndDropColor;
-  border-inline: $dragAndDropBorder;
+  border: $dragAndDropBorder;
   opacity: 0.75;
 }
 
@@ -147,7 +147,6 @@ $focusedForegroundColor: #fb1;
       flex: 0 0 auto;
       overflow-x: scroll;
       overflow-y: hidden;
-      z-index: 1000;
       .rubber-dock__item-tab {
         @extend %expand;
         background-color: $itemBackgroundColor;
@@ -189,6 +188,7 @@ $focusedForegroundColor: #fb1;
     }
     &__items {
       @extend %expand;
+      position: relative;
       .rubber-dock__item {
         @extend %expand;
         @include scrollbar();
@@ -231,7 +231,6 @@ $focusedForegroundColor: #fb1;
       flex: 0 0 auto;
       overflow-x: hidden;
       overflow-y: scroll;
-      z-index: 1000;
       .rubber-dock__item-tab {
         @extend %expand;
         background-color: $itemBackgroundColor;
@@ -274,6 +273,7 @@ $focusedForegroundColor: #fb1;
     }
     &__items {
       @extend %expand;
+      position: relative;
       .rubber-dock__item {
         @extend %expand;
         @include scrollbar();
@@ -326,6 +326,15 @@ $focusedForegroundColor: #fb1;
 .grid-expander {
   @extend %expand;
   position: absolute;
+  &:after {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    transition: all 0.5s ease;
+  }
 }
 
 .dragged {
@@ -336,23 +345,19 @@ $focusedForegroundColor: #fb1;
 .dragged-before-row:after {
   @extend %dragAndDrop;
   @extend %topSide;
-  z-index: 1001;
 }
 
 .dragged-before-column:after {
   @extend %dragAndDrop;
   @extend %leftSide;
-  z-index: 1001;
 }
 
 .dragged-after-row:after {
   @extend %dragAndDrop;
   @extend %bottomSide;
-  z-index: 1001;
 }
 
 .dragged-after-column:after {
   @extend %dragAndDrop;
   @extend %rightSide;
-  z-index: 1001;
 }

@@ -1,4 +1,4 @@
-import React, {cloneElement, useEffect, useRef, useState} from "react";
+import React, {cloneElement, isValidElement, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import ItemTab from "./ItemTab";
 import {v4 as uuid} from "uuid";
@@ -9,6 +9,7 @@ import {
     deregisterItem,
     dropItem
 } from "../actions/ItemActions";
+import {GridGroupType, GridPosition} from "../util/common";
 
 const Stack = props => {
     let {
@@ -18,13 +19,15 @@ const Stack = props => {
         items,
         focus,
         onClose: onStackClose,
+        onDrop: onStackDrop,
         registerStack,
         deregisterStack,
         deregisterItem,
         dropItem,
-        vertical = false} = props;
+        vertical: _vertical = false} = props;
 
     const tabsRef = useRef();
+    const itemsRef = useRef();
     children = children instanceof Array ? children : [children];
     children = children.map(x => ({
         ...x,
@@ -32,26 +35,35 @@ const Stack = props => {
     }));
 
     const [tabsHeight, setTabsHeight] = useState(0);
+    const [vertical, setVertical] = useState(_vertical);
+    const [className, setClassName] = useState(_vertical ? 'rubber-dock__vstack' : 'rubber-dock__hstack');
     const [stackDraggedClass, setStackDraggedClass] = useState('');
     const [isTabsDragged, setIsTabsDragged] = useState(false);
 
     useEffect(() => {
-        if (vertical) {
-            setTabsHeight(0);
-
-            return;
-        }
-
-        // Get the tab height
-        let current = tabsRef.current;
-        setTabsHeight(current.offsetHeight);
         registerStack();
 
         return deregisterStack;
+    }, []);
+
+    // Set the stack class based on if vertical is toggled (or not)
+    useEffect(() => {
+        setClassName(vertical ? 'rubber-dock__vstack' : 'rubber-dock__hstack');
     }, [vertical]);
 
-    const onStackDragOver = event => {
-        const {left, top, width, height} = itemRef.current.getBoundingClientRect();
+    // Set the tabs height value for properly building out the items
+    useEffect(() => {
+        if (vertical) {
+            setTabsHeight(0);
+        } else {
+            let current = tabsRef.current;
+            setTabsHeight(current.offsetHeight);
+        }
+    }, [vertical, className])
+
+    const onDragOver = event => {
+        // Calculate the angle from the mouse position and the center of the element; angle defines intention
+        const {left, top, width, height} = itemsRef.current.getBoundingClientRect();
         const [cx, cy] = [width / 2 + left, height / 2 + top];
         const [dx, dy] = [event.clientX - cx, -(event.clientY - cy)];
         let theta = Math.atan2(dy, dx) * 180 / Math.PI;
@@ -72,13 +84,39 @@ const Stack = props => {
         event.preventDefault();
     };
 
-    const onStackDragLeave = event => {
+    const onDragLeave = event => {
         setStackDraggedClass('');
     };
 
-    const onStackDrop = event => {
+    const onDrop = event => {
         setStackDraggedClass('');
-        console.log(event);
+
+        const type = event.dataTransfer.getData('type');
+        const stackId = event.dataTransfer.getData('stackId');
+        const itemId = event.dataTransfer.getData('id');
+
+        if (type !== 'item') {
+            return;
+        }
+
+        switch (stackDraggedClass) {
+            case 'dragged-before-row':
+                onStackDrop(itemId, GridGroupType.Column, GridPosition.Before);
+                break;
+            case 'dragged-after-row':
+                onStackDrop(itemId, GridGroupType.Column, GridPosition.After);
+                break;
+            case 'dragged-before-column':
+                onStackDrop(itemId, GridGroupType.Row, GridPosition.Before);
+                break;
+            case 'dragged-after-column':
+                onStackDrop(itemId, GridGroupType.Row, GridPosition.After);
+                break;
+        }
+
+        if (event.dataTransfer.effectAllowed === 'move') {
+            deregisterItem(stackId, itemId);
+        }
     };
 
     const onTabsDragOver = event => {
@@ -112,11 +150,9 @@ const Stack = props => {
         return null;
     }
 
-    const className = vertical ? 'rubber-dock__vstack' : 'rubber-dock__hstack';
-
-    return (<div ref={itemRef} className={`${className} active ${stackDraggedClass}`}>
-        <span className="grid-expander" onDragOver={onStackDragOver} onDragLeave={onStackDragLeave} onDrop={onStackDrop}>&nbsp;</span>
-        <div ref={tabsRef} className={`${className}__item-tabs ${isTabsDragged ? 'dragged' : ''}`} onDragOver={onTabsDragOver}  onDragLeave={onTabsDragLeave} onDrop={onTabsDrop}>
+    return (<div ref={itemRef} className={`${className} active`}>
+        <div ref={tabsRef} className={`${className}__item-tabs`} onDragOver={onTabsDragOver}  onDragLeave={onTabsDragLeave} onDrop={onTabsDrop}>
+            <span className={isTabsDragged ? 'dragged' : ''}></span>
             {(items || children).map((item, index) => {
                 let {id: itemId} = item;
                 let _item = item?.item || item;
@@ -126,8 +162,12 @@ const Stack = props => {
                     {tab}
                 </ItemTab>);
             })}
+            <div className="rubber-dock__item-tab__button-bar">
+                <i className="fas fa-adjust fa-lg" onClick={() => setVertical(!vertical)} />
+            </div>
         </div>
-        <div className={`${className}__items`} style={{height: `calc(100% - ${tabsHeight}px)`}}>
+        <div ref={itemsRef} className={`${className}__items`} style={{height: `calc(100% - ${tabsHeight}px)`}} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
+            <span className={stackDraggedClass}></span>
             {(items || children).map((item, index) => {
                 let {id: itemId} = item;
                 let _item = item?.item || item;

@@ -1,17 +1,7 @@
-import React, {Component, useRef} from "react";
+import React, {useRef} from "react";
 
-class Resizer extends Component {
-    onMouseMove(event, left, right, leftFlexBasis, rightFlexBasis) {
-        throw new Error('Not implemented');
-    }
-
-    render() {
-        return (<ResizerInner {...this.props} onMouseMove={this.onMouseMove} />);
-    }
-}
-
-const ResizerInner = props => {
-    let {itemRef, onMouseMove: _onMouseMove} = props;
+const Resizer = props => {
+    let {itemRef, onResize} = props;
     let left, right;
     const ref = useRef();
 
@@ -23,7 +13,7 @@ const ResizerInner = props => {
             window.removeEventListener('mouseup', onMouseUp);
             window.removeEventListener('mousemove', onMouseMove);
         }
-        let onMouseMove = event => _onMouseMove(event, left, right);
+        let onMouseMove = event => onResize(event, left, right);
 
         window.addEventListener('mouseup', onMouseUp);
         window.addEventListener('mousemove', onMouseMove);
@@ -33,6 +23,6 @@ const ResizerInner = props => {
         ref={ref}
         className="rubber-dock__resizer"
         onMouseDown={() => onMouseDown()}>&nbsp;</div>);
-}
+};
 
 export default Resizer;
