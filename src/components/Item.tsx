@@ -17,9 +17,7 @@ const Item = props => {
             <div className="rubber-dock__item__body">
                 {Children.map(children, child => {
                     if (typeof child.type === 'function' && isValidElement(child)) {
-                        try {
-                            return cloneElement(child, props);
-                        } catch (exception) { }
+                        return cloneElement(child, props);
                     }
 
                     return child;
