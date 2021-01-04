@@ -2,7 +2,7 @@ import * as React from 'react';
 import ReactDOM from "react-dom";
 import * as l from "../src/main";
 
-const Something = ({id, ...props}) => {
+const Something = ({id}) => {
   return (<div>{id}</div>);
 }
 

@@ -1,13 +1,13 @@
 import React, {useRef} from "react";
 
 const Resizer = props => {
-    let {itemRef, onResize} = props;
-    let left, right;
+    let {onResize} = props;
     const ref = useRef();
 
     const onMouseDown = () => {
-        left = itemRef.current;
-        right = left.nextSibling.nextSibling;
+        let resizer: Element = ref.current;
+        let left = resizer.previousSibling;
+        let right = resizer.nextSibling;
 
         let onMouseUp = () => {
             window.removeEventListener('mouseup', onMouseUp);

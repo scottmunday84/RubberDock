@@ -1,6 +1,9 @@
 import React from "react";
 
 export const ActionTypes = {
+    // Layout
+    InDrag: 'InDrag',
+    OutDrag: 'OutDrag',
     // Stacks
     StackRegister: 'StackRegister',
     StackDeregister: 'StackDeregister',

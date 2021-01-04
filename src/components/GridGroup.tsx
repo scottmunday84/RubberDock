@@ -1,4 +1,4 @@
-import React, {cloneElement, Fragment, forwardRef, useRef, isValidElement} from "react";
+import React, {cloneElement, Fragment, isValidElement} from "react";
 import Stack from "./Stack";
 import Item from "./Item";
 import Resizer from "./Resizer";
@@ -7,17 +7,17 @@ import Row from "./Row";
 
 const GridGroup = props => {
     let {id, item, onClose, onDrop, onResize} = props;
-    let itemRef = useRef();
 
     return (<Fragment>
-        <GridGroupItem ref={itemRef} id={id} item={item} onClose={onClose} onDrop={onDrop} />
-        {onResize ? (<Resizer itemRef={itemRef} onResize={onResize} />) : null}
+        <GridGroupInner id={id} item={item} onClose={onClose} onDrop={onDrop} />
+        {onResize ? (<Resizer onResize={onResize} />) : null}
     </Fragment>);
 };
 
-const GridGroupItem = forwardRef((props, ref) => {
+const GridGroupInner = props => {
     let {id, item, onClose, onDrop} = props;
 
+    // Guard against using an invalid element against type checks
     if (!isValidElement(item)) {
         return null;
     }
@@ -29,16 +29,14 @@ const GridGroupItem = forwardRef((props, ref) => {
     if (isGridGroup) {
         return cloneElement(item, {id, onClose});
     } else if (isStack) {
-        return cloneElement(item, {id, itemRef: ref, onClose, onDrop});
+        return cloneElement(item, {id, onClose, onDrop});
     } else if (isItem) {
-        return (<Stack id={id} itemRef={ref} onClose={onClose} onDrop={onDrop}>
+        return (<Stack id={id} onClose={onClose} onDrop={onDrop}>
             {item}
         </Stack>);
     }
 
-    debugger;
-
     return null;
-});
+};
 
 export default GridGroup;

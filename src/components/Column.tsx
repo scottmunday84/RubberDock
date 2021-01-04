@@ -34,11 +34,11 @@ class Column extends Component<any, any> {
         let children = [...this.state.children];
         let index = children.findIndex(x => x.id === childId);
         if (index === -1) {
-            return;
+            return false;
         }
 
         if (!(itemId in items)) {
-            return;
+            return false;
         }
 
         let item = {
@@ -70,6 +70,8 @@ class Column extends Component<any, any> {
         this.setState({
             children
         });
+
+        return true;
     }
 
     onResize(event, left, right) {

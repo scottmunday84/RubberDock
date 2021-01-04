@@ -103,6 +103,7 @@ $focusedForegroundColor: #fb1;
 .rubber-dock {
   &__layout {
     @extend %grid;
+    position: relative;
     background-color: $layoutBackgroundColor;
     color: $layoutForegroundColor;
   }
@@ -342,22 +343,49 @@ $focusedForegroundColor: #fb1;
   filter: grayscale(100%);
 }
 
-.dragged-before-row:after {
+.dragged-before-column:after {
   @extend %dragAndDrop;
   @extend %topSide;
 }
 
-.dragged-before-column:after {
+.dragged-before-row:after {
   @extend %dragAndDrop;
   @extend %leftSide;
 }
 
-.dragged-after-row:after {
+.dragged-after-column:after {
   @extend %dragAndDrop;
   @extend %bottomSide;
 }
 
-.dragged-after-column:after {
+.dragged-after-row:after {
   @extend %dragAndDrop;
   @extend %rightSide;
+}
+
+.foobarTop {
+  position: absolute;
+  background-color: $layoutBackgroundColor;
+  opacity: 0.9;
+  width: 100%;
+  height: 32px;
+}
+
+.layout-drop-bar {
+  position: absolute;
+  background-color: $layoutBackgroundColor;
+  opacity: 0.9;
+  right: 0;
+  i:hover {
+    color: $focusedForegroundColor;
+  }
+}
+
+.foobarBottom {
+  position: absolute;
+  background-color: $layoutBackgroundColor;
+  opacity: 0.9;
+  width: 100%;
+  height: 20px;
+  bottom: 0;
 }

@@ -14,12 +14,11 @@ import {GridGroupType, GridPosition} from "../util/common";
 const Stack = props => {
     let {
         children,
-        itemRef,
         id,
         items,
         focus,
-        onClose: onStackClose,
-        onDrop: onStackDrop,
+        onClose: onParentClose,
+        onDrop: onParentDrop,
         registerStack,
         deregisterStack,
         deregisterItem,
@@ -72,13 +71,13 @@ const Stack = props => {
         }
 
         if (theta >= 45 && theta < 135) {
-            setStackDraggedClass('dragged-before-row');
-        } else if (theta >= 135 && theta < 180) {
             setStackDraggedClass('dragged-before-column');
+        } else if (theta >= 135 && theta < 180) {
+            setStackDraggedClass('dragged-before-row');
         } else if (theta >= 180 && theta < 315) {
-            setStackDraggedClass('dragged-after-row');
-        } else if ((theta >= 315 || theta < 45)) {
             setStackDraggedClass('dragged-after-column');
+        } else if ((theta >= 315 || theta < 45)) {
+            setStackDraggedClass('dragged-after-row');
         }
 
         event.preventDefault();
@@ -100,17 +99,25 @@ const Stack = props => {
         }
 
         switch (stackDraggedClass) {
-            case 'dragged-before-row':
-                onStackDrop(itemId, GridGroupType.Column, GridPosition.Before);
-                break;
-            case 'dragged-after-row':
-                onStackDrop(itemId, GridGroupType.Column, GridPosition.After);
-                break;
             case 'dragged-before-column':
-                onStackDrop(itemId, GridGroupType.Row, GridPosition.Before);
+                if (!onParentDrop(itemId, GridGroupType.Column, GridPosition.Before)) {
+                    return;
+                }
                 break;
             case 'dragged-after-column':
-                onStackDrop(itemId, GridGroupType.Row, GridPosition.After);
+                if (!onParentDrop(itemId, GridGroupType.Column, GridPosition.After)) {
+                    return;
+                }
+                break;
+            case 'dragged-before-row':
+                if (!onParentDrop(itemId, GridGroupType.Row, GridPosition.Before)) {
+                    return;
+                }
+                break;
+            case 'dragged-after-row':
+                if (!onParentDrop(itemId, GridGroupType.Row, GridPosition.After)) {
+                    return;
+                }
                 break;
         }
 
@@ -145,12 +152,12 @@ const Stack = props => {
     };
 
     if ((items || children).length === 0) {
-        onStackClose();
+        onParentClose();
 
         return null;
     }
 
-    return (<div ref={itemRef} className={`${className} active`}>
+    return (<div className={`${className} active`}>
         <div ref={tabsRef} className={`${className}__item-tabs`} onDragOver={onTabsDragOver}  onDragLeave={onTabsDragLeave} onDrop={onTabsDrop}>
             <span className={isTabsDragged ? 'dragged' : ''}></span>
             {(items || children).map((item, index) => {
@@ -172,7 +179,7 @@ const Stack = props => {
                 let {id: itemId} = item;
                 let _item = item?.item || item;
 
-                return cloneElement(_item, {key: itemId, id: itemId, stackId: id, stackIndex: index, onStackClose, item: _item, isFocused: focus === itemId});
+                return cloneElement(_item, {key: itemId, id: itemId, stackId: id, stackIndex: index, onParentClose, item: _item, isFocused: focus === itemId});
             })}
         </div>
     </div>);
