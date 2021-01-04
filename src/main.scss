@@ -363,14 +363,6 @@ $focusedForegroundColor: #fb1;
   @extend %rightSide;
 }
 
-.foobarTop {
-  position: absolute;
-  background-color: $layoutBackgroundColor;
-  opacity: 0.9;
-  width: 100%;
-  height: 32px;
-}
-
 .layout-drop-bar {
   position: absolute;
   background-color: $layoutBackgroundColor;
@@ -379,13 +371,4 @@ $focusedForegroundColor: #fb1;
   i:hover {
     color: $focusedForegroundColor;
   }
-}
-
-.foobarBottom {
-  position: absolute;
-  background-color: $layoutBackgroundColor;
-  opacity: 0.9;
-  width: 100%;
-  height: 20px;
-  bottom: 0;
 }

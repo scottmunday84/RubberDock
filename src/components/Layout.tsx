@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useEffect, useRef, useState} from "react";
+import React, {FunctionComponent, useRef} from "react";
 import {Provider, connect} from "react-redux";
 import {applyMiddleware, createStore} from "redux";
 import reducer from "../reducers/index";
