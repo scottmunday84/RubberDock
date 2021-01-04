@@ -51,8 +51,8 @@ class Column extends Component<any, any> {
             const childItem = cloneElement(children[index].item);
 
             item.item = gridPosition === GridPosition.Before ? (<Row>
-                {item.item}
-                {childItem}
+                    {item.item}
+                    {childItem}
             </Row>) : (<Row>
                 {childItem}
                 {item.item}
