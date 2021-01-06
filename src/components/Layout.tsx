@@ -1,20 +1,18 @@
-import React, {FunctionComponent, useRef} from "react";
-import {Provider, connect} from "react-redux";
+import React, {cloneElement, FunctionComponent, useEffect, useRef, useState} from "react";
+import {connect, Provider} from "react-redux";
 import {applyMiddleware, createStore} from "redux";
 import reducer from "../reducers/index";
-import Item from "./Item";
-import Stack from "./Stack";
 import Row from "./Row";
 import Column from "./Column";
 import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import {deregisterItem} from "../actions/ItemActions";
+import {GridGroupType, GridPosition} from "../util/common";
 
-type LayoutComponent = Row | Column | Stack | Item;
+type GridGroupComponent = Row | Column;
 type LayoutProps = {
-    children: LayoutComponent | LayoutComponent[];
-    inDrag: boolean
-}
+    children: GridGroupComponent;
+};
 
 const Layout: FunctionComponent<LayoutProps> = props => {
     let {children} = props;
@@ -46,12 +44,31 @@ const LayoutInner = connect(mapStateToProps, mapDispatchToProps)(props => {
     let {children, inDrag, deregisterItem} = props;
     const ref = useRef();
 
+    const [child, setChild] = useState(children);
+    const [childRef, setChildRef] = useState(null);
+    const [onDropObject, setOnDropObject] = useState(null);
+
     const onDragOver = event => {
         event.stopPropagation();
         event.preventDefault();
     };
 
-    const onDrop = (event) => {
+    // TODO: Does the job, but ugly
+    const onBind = childRef => {
+        setChildRef(childRef);
+
+        if (onDropObject !== null) {
+            const {params, stackId, itemId, effectAllowed} = onDropObject;
+
+            if (childRef.onDrop.apply(childRef, params)) {
+                if (effectAllowed === 'move') {
+                    deregisterItem(stackId, itemId);
+                }
+            }
+        }
+    };
+
+    const onDrop = (event, gridGroupType: GridGroupType, gridPosition: GridPosition) => {
         const type = event.dataTransfer.getData('type');
         const stackId = event.dataTransfer.getData('stackId');
         const itemId = event.dataTransfer.getData('id');
@@ -60,18 +77,36 @@ const LayoutInner = connect(mapStateToProps, mapDispatchToProps)(props => {
             return;
         }
 
-        if (event.dataTransfer.effectAllowed === 'move') {
-            deregisterItem(stackId, itemId);
+        if (child.type === Column && gridGroupType === GridGroupType.Row) {
+            setChild((<Row>{child}</Row>));
+            setOnDropObject({
+                params: [null, itemId, gridGroupType, gridPosition],
+                stackId,
+                itemId,
+                effectAllowed: event.dataTransfer.effectAllowed
+            });
+        } else if (child.type === Row && gridGroupType === GridGroupType.Column) {
+            setChild((<Column>{child}</Column>));
+            setOnDropObject({
+                params: [null, itemId, gridGroupType, gridPosition],
+                stackId,
+                itemId,
+                effectAllowed: event.dataTransfer.effectAllowed
+            });
+        } else if (childRef.onDrop(null, itemId, gridGroupType, gridPosition)) {
+            if (event.dataTransfer.effectAllowed === 'move') {
+                deregisterItem(stackId, itemId);
+            }
         }
     };
 
     return (<div ref={ref} className="rubber-dock__layout">
-        {children}
+        {cloneElement(child, {onBind})}
         <span className="layout-drop-bar" style={{display: inDrag ? 'inline-block' : 'none'}}>
-            <i className="fas fa-caret-left fa-2x" onDragOver={onDragOver} onDrop={onDrop}>&nbsp;</i>
-            <i className="fas fa-caret-right fa-2x">&nbsp;</i>
-            <i className="fas fa-caret-up fa-2x">&nbsp;</i>
-            <i className="fas fa-caret-down fa-2x">&nbsp;</i>
+            <i className="fas fa-caret-left fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Row, GridPosition.Before)}>&nbsp;</i>
+            <i className="fas fa-caret-right fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Row, GridPosition.After)}>&nbsp;</i>
+            <i className="fas fa-caret-up fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Column, GridPosition.Before)}>&nbsp;</i>
+            <i className="fas fa-caret-down fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Column, GridPosition.After)}>&nbsp;</i>
         </span>
     </div>);
 });

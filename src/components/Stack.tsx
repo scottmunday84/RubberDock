@@ -170,7 +170,9 @@ const Stack = props => {
                 </ItemTab>);
             })}
             <div className="rubber-dock__item-tab__button-bar">
-                <i className="fas fa-adjust fa-lg" onClick={() => setVertical(!vertical)} />
+                <div>
+                    <i className="fas fa-adjust fa-lg" onClick={() => setVertical(!vertical)} />
+                </div>
             </div>
         </div>
         <div ref={itemsRef} className={`${className}__items`} style={{height: `calc(100% - ${tabsHeight}px)`}} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>

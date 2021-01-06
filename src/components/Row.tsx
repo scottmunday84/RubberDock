@@ -14,6 +14,12 @@ class Row extends Component<any, any> {
         }
     }
 
+    componentDidMount() {
+        if (this.props.onBind) {
+            this.props.onBind(this);
+        }
+    }
+
     onClose(id) {
         // Remove child
         let children = [...this.state.children];
@@ -31,7 +37,9 @@ class Row extends Component<any, any> {
     onDrop(childId, itemId, gridGroupType: GridGroupType, gridPosition: GridPosition) {
         let items = this.props.items;
         let children = [...this.state.children];
-        let index = children.findIndex(x => x.id === childId);
+        let index = childId !== null ?
+            children.findIndex(x => x.id === childId) :
+            gridPosition === GridPosition.Before ? 0 : children.length - 1;
         if (index === -1) {
             return false;
         }

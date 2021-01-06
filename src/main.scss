@@ -148,6 +148,20 @@ $focusedForegroundColor: #fb1;
       flex: 0 0 auto;
       overflow-x: scroll;
       overflow-y: hidden;
+      >.rubber-dock__item-tab__button-bar {
+        @extend %expand;
+        display: flex;
+        align-content: center;
+        justify-content: flex-end;
+        opacity: 1;
+        i {
+          height: 32px;
+          margin-top: 5px;
+          &:hover {
+            color: $focusedForegroundColor;
+          }
+        }
+      }
       .rubber-dock__item-tab {
         @extend %expand;
         background-color: $itemBackgroundColor;
@@ -174,6 +188,7 @@ $focusedForegroundColor: #fb1;
           justify-content: center;
           opacity: 1;
           i {
+            height: 32px;
             margin-top: 2px;
             &:hover {
               color: $focusedForegroundColor;
@@ -232,6 +247,20 @@ $focusedForegroundColor: #fb1;
       flex: 0 0 auto;
       overflow-x: hidden;
       overflow-y: scroll;
+      >.rubber-dock__item-tab__button-bar {
+        @extend %expand;
+        display: flex;
+        align-content: center;
+        justify-content: flex-end;
+        opacity: 1;
+        i {
+          height: 32px;
+          margin-top: 5px;
+          &:hover {
+            color: $focusedForegroundColor;
+          }
+        }
+      }
       .rubber-dock__item-tab {
         @extend %expand;
         background-color: $itemBackgroundColor;

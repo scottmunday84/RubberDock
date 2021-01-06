@@ -24,7 +24,9 @@ const deregisterStack = (state, id) => {
 
     // Remove stack
     let {[id]: stack, ...stacks} = state;
-    stack.onClose();
+    if (stack.onClose !== undefined) {
+        stack.onClose();
+    }
 
     return stacks;
 };
@@ -69,6 +71,11 @@ const reducer = (state = initialState, action) => {
         case ActionTypes.ItemDeregister: {
             const {stackId, id: itemId} = action.payload;
             const stack = state[stackId];
+
+            if (stack === undefined) {
+                return state;
+            }
+
             const getItemIndexById = x => stack.items.findIndex(y => y === x);
 
             // Remove child
