@@ -1,18 +1,18 @@
 import {ActionTypes} from "../util/common";
 
 let initialState = {
-    inDrag: false
+    dragging: false
 };
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case ActionTypes.InDrag:
             return {
-                inDrag: true
+                dragging: true
             };
         case ActionTypes.OutDrag:
             return {
-                inDrag: false
+                dragging: false
             };
         default:
             return initialState

@@ -106,22 +106,21 @@ const reducer = (state = initialState, action) => {
             };
         }
         case ActionTypes.ItemDrop: {
-            const {stackId, newId: itemId} = action.payload;
+            const {stackId, newId: itemId, position} = action.payload;
             const stack = state[stackId];
             const getItemIndexById = x => stack.items.findIndex(y => y === x);
             if (getItemIndexById(itemId) !== -1) {
                 return state;
             }
+            let items = [...stack.items];
+            items.splice(position, 0, itemId);
 
             // Drop item into stack
             return {
                 ...state,
                 [stackId]: {
                     ...stack,
-                    items: [
-                        ...stack.items,
-                        itemId
-                    ]
+                    items
                 }
             };
         }

@@ -17,6 +17,7 @@ const Stack = props => {
         id,
         items,
         focus,
+        dragging,
         onClose: onParentClose,
         onDrop: onParentDrop,
         registerStack,
@@ -37,7 +38,7 @@ const Stack = props => {
     const [vertical, setVertical] = useState(_vertical);
     const [className, setClassName] = useState(_vertical ? 'rubber-dock__vstack' : 'rubber-dock__hstack');
     const [stackDraggedClass, setStackDraggedClass] = useState('');
-    const [isTabsDragged, setIsTabsDragged] = useState(false);
+    const [dragTabPosition, setDragTabPosition] = useState(-1);
 
     useEffect(() => {
         registerStack();
@@ -83,7 +84,7 @@ const Stack = props => {
         event.preventDefault();
     };
 
-    const onDragLeave = event => {
+    const onDragLeave = () => {
         setStackDraggedClass('');
     };
 
@@ -126,29 +127,29 @@ const Stack = props => {
         }
     };
 
-    const onTabsDragOver = event => {
-        setIsTabsDragged(true);
+    const onTabsDragOver = (event, position) => {
+        setDragTabPosition(position);
         event.preventDefault();
     };
 
-    const onTabsDragLeave = event => {
-        setIsTabsDragged(false);
+    const onTabsDragLeave = () => {
+        setDragTabPosition(-1);
     };
 
     const onTabsDrop = event => {
-        setIsTabsDragged(false);
-
         const type = event.dataTransfer.getData('type');
         const stackId = event.dataTransfer.getData('stackId');
         const itemId = event.dataTransfer.getData('id');
 
-        if (type === 'item' && items.findIndex(x => x.id === itemId) === -1) {
-            dropItem(itemId, uuid());
+        if (type === 'item' && items.findIndex(x => x.id === itemId) === -1 && dragTabPosition !== -1) {
+            dropItem(itemId, uuid(), dragTabPosition);
 
             if (event.dataTransfer.effectAllowed === 'move') {
                 deregisterItem(stackId, itemId);
             }
         }
+
+        setDragTabPosition(-1);
     };
 
     if ((items || children).length === 0) {
@@ -158,16 +159,20 @@ const Stack = props => {
     }
 
     return (<div className={`${className} active`}>
-        <div ref={tabsRef} className={`${className}__item-tabs`} onDragOver={onTabsDragOver}  onDragLeave={onTabsDragLeave} onDrop={onTabsDrop}>
-            <span className={isTabsDragged ? 'dragged' : ''}></span>
+        <div ref={tabsRef} className={`${className}__item-tabs`}>
+            <span className={`rubber-dock__tab-divider ${dragging ? 'dragged' : ''} ${dragTabPosition === 0 ? 'hover' : ''}`} onDragOver={event => onTabsDragOver(event, 0)}  onDragLeave={event => onTabsDragLeave(event, 0)} onDrop={onTabsDrop}>&nbsp;</span>
             {(items || children).map((item, index) => {
+                const position = index + 1;
                 let {id: itemId} = item;
                 let _item = item?.item || item;
                 let {tab} = _item.props;
 
-                return (<ItemTab key={itemId} id={itemId} stackId={id} stackIndex={index} isFocused={focus === itemId}>
-                    {tab}
-                </ItemTab>);
+                return (<>
+                        <ItemTab key={itemId} id={itemId} stackId={id} stackIndex={index} isFocused={focus === itemId}>
+                            {tab}
+                        </ItemTab>
+                        <span key={position} className={`rubber-dock__tab-divider ${dragging ? 'dragged' : ''} ${dragTabPosition === position ? 'hover' : ''}`} onDragOver={event => onTabsDragOver(event, position)}  onDragLeave={onTabsDragLeave} onDrop={onTabsDrop}>&nbsp;</span>
+                    </>);
             })}
             <div className="rubber-dock__item-tab__button-bar">
                 <div>
@@ -188,9 +193,11 @@ const Stack = props => {
 };
 
 const mapStateToProps = (state, ownProps) => {
+    const dragging = state.layout.dragging;
     const stack = state.stacks[ownProps.id];
 
     return {
+        dragging,
         items: stack?.items?.map(x => ({
             ...state.items[x],
             id: x})),

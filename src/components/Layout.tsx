@@ -1,4 +1,4 @@
-import React, {cloneElement, FunctionComponent, useEffect, useRef, useState} from "react";
+import React, {cloneElement, FunctionComponent, useRef, useState} from "react";
 import {connect, Provider} from "react-redux";
 import {applyMiddleware, createStore} from "redux";
 import reducer from "../reducers/index";
@@ -41,7 +41,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 const LayoutInner = connect(mapStateToProps, mapDispatchToProps)(props => {
-    let {children, inDrag, deregisterItem} = props;
+    let {children, dragging, deregisterItem} = props;
     const ref = useRef();
 
     const [child, setChild] = useState(children);
@@ -102,7 +102,7 @@ const LayoutInner = connect(mapStateToProps, mapDispatchToProps)(props => {
 
     return (<div ref={ref} className="rubber-dock__layout">
         {cloneElement(child, {onBind})}
-        <span className="layout-drop-bar" style={{display: inDrag ? 'inline-block' : 'none'}}>
+        <span className="layout-drop-bar" style={{display: dragging ? 'inline-block' : 'none'}}>
             <i className="fas fa-caret-left fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Row, GridPosition.Before)}>&nbsp;</i>
             <i className="fas fa-caret-right fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Row, GridPosition.After)}>&nbsp;</i>
             <i className="fas fa-caret-up fa-2x" onDragOver={onDragOver} onDrop={event => onDrop(event, GridGroupType.Column, GridPosition.Before)}>&nbsp;</i>
