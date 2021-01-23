@@ -30,7 +30,7 @@ const Layout: FunctionComponent<LayoutProps> = props => {
 // LayoutInner
 const mapStateToProps = state => {
     return {
-        inDrag: state.layout.inDrag
+        dragging: state.layout.dragging
     };
 };
 

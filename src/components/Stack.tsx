@@ -141,7 +141,7 @@ const Stack = props => {
         const stackId = event.dataTransfer.getData('stackId');
         const itemId = event.dataTransfer.getData('id');
 
-        if (type === 'item' && items.findIndex(x => x.id === itemId) === -1 && dragTabPosition !== -1) {
+        if (type === 'item' && dragTabPosition !== -1) {
             dropItem(itemId, uuid(), dragTabPosition);
 
             if (event.dataTransfer.effectAllowed === 'move') {
